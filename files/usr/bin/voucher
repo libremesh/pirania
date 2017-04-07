@@ -1,0 +1,53 @@
+#!/usr/bin/lua
+
+local config = require('voucher.config')
+local dba = require('voucher.db')
+local logic = require('voucher.logic')
+local ft = require('voucher.functools')
+
+local arguments
+local action
+local context
+
+captive_portal = {}
+
+captive_portal.auth_voucher = function(context)
+    local mac = context[1]
+    local voucher = context[2]
+
+    local db = dba.load(config.db)
+    return logic.auth_voucher(db, mac, voucher)
+end
+
+captive_portal.status = function(context)
+    local mac = context[1]
+
+    local db = dba.load(config.db)
+    return logic.status(db, mac)
+end
+
+captive_portal.add_voucher = function(context)
+    local key = context[1]
+    local voucher = context[2]
+    local epoc = context[3]
+    local upload = context[4] and context[4] or '0'
+    local download = context[5] and context[5] or '0'
+    local amountofmacsallowed = context[6] and context[6] or '0'
+
+    local db = dba.load(config.db)
+    local retval = { logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)}
+    dba.save(config.db, db)
+    return unpack(retval)
+end
+
+-- if is main
+if debug.getinfo(2).name == nil then
+    arguments = { ... }
+    action = arguments[1]
+    context = ft.filter(function(row, index) return index > 1 end, arguments)
+
+    epoc, upload, download = captive_portal[action](context)
+    print( epoc..' '..upload..' '..download)
+end
+
+return captive_portal

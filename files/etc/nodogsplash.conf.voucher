@@ -1,0 +1,3 @@
+BinVoucher "/usr/bin/voucher"
+ForceVoucher yes
+EnablePreAuth yes

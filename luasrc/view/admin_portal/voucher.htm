@@ -1,0 +1,31 @@
+<%+header%>
+<div>
+  <h2>
+    Add voucher
+  </h2>
+  <form method="post">
+    <input name="action" value="add_voucher" type="hidden">
+    <input name="key" placeholder="voucher key" type="input">
+    <input name="voucher" placeholder="voucher code" type="input">
+    <input name="expiretime" placeholder="Expire time" type="number">
+    <input name="uploadlimit" placeholder="upload speed limit" type="number">
+    <input name="downloadlimit" placeholder="download speed limit" type="number">
+    <input name="amountofmacsallowed" placeholder="amounts of devices allowed" type="number">
+    <input value="Add" type="submit"></input>
+  </form>
+</div>
+<div>
+  <h2>Current vouchers</h2>
+  <table>
+  <% for _, row in pairs( vouchers ) do %>
+    <tr>
+    <% for _, column in pairs( row ) do %>
+      <td><%= column %></td>
+    <% end %>
+    </tr>
+  <% end %>
+  </table>
+</div>
+
+
+<%+footer%>

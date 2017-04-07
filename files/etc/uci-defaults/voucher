@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cat etc/nodogsplash.conf.captive-portal >> /etc/nodgsplash.conf
