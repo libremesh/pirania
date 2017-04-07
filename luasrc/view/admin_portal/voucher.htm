@@ -1,16 +1,25 @@
 <%+header%>
+<style>
+label {
+  display: block;
+}
+label > span {
+    min-width: 15em;
+    display: inline-block;
+}
+</style>
 <div>
   <h2>
     Add voucher
   </h2>
   <form method="post">
     <input name="action" value="add_voucher" type="hidden">
-    <input name="key" placeholder="voucher key" type="input">
-    <input name="voucher" placeholder="voucher code" type="input">
-    <input name="expiretime" placeholder="Expire time" type="number">
-    <input name="uploadlimit" placeholder="upload speed limit" type="number">
-    <input name="downloadlimit" placeholder="download speed limit" type="number">
-    <input name="amountofmacsallowed" placeholder="amounts of devices allowed" type="number">
+    <label for='key'><span>Key</span><input name="key" placeholder="voucher key" type="input"></label>
+    <label for='voucher'><span>Voucher code</span><input name="voucher" placeholder="voucher code" type="input"></label>
+    <label for='expiretime'><span>Expire time</span><input name="expiretime" placeholder="Expire time" type="number"></label>
+    <label for='uploadlimit'><span>Upload speed Limit</span><input name="uploadlimit" placeholder="upload speed limit" type="number"></label>
+    <label for='downloadlimit'><span>Download speed Limit</span><input name="downloadlimit" placeholder="download speed limit" type="number"></label>
+    <label for='amountsofmacsallowed'><span>Amounts of devices allowed</span><input name="amountofmacsallowed" placeholder="amounts of devices allowed" type="number"></label>
     <input value="Add" type="submit"></input>
   </form>
 </div>
