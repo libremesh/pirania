@@ -1,5 +1,7 @@
 # Voucher interface for Captive Portal
 
+![PITBULL](https://j.gifs.com/X6vnX8.gif)
+
 This tool allows an administrator to manage a voucher system to get through the gateway.
 
 It could be used in a community that wants to share an Internet connection and for that the user's pay a fraction each, but needs the payment from everyone. So the vouchers allows to control the payments via the control of the access to Internet.

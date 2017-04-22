@@ -16,14 +16,17 @@ captive_portal.auth_voucher = function(context)
     local voucher = context[2]
 
     local db = dba.load(config.db)
-    return logic.auth_voucher(db, mac, voucher)
+    local retval = { logic.auth_voucher(db, mac, voucher)}
+
+    dba.save(config.db, db)
+    print ( unpack(retval) )
 end
 
 captive_portal.status = function(context)
     local mac = context[1]
 
     local db = dba.load(config.db)
-    return logic.status(db, mac)
+    print ( logic.status(db, mac) )
 end
 
 captive_portal.add_voucher = function(context)
@@ -37,7 +40,24 @@ captive_portal.add_voucher = function(context)
     local db = dba.load(config.db)
     local retval = { logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)}
     dba.save(config.db, db)
-    return unpack(retval)
+    print ( unpack(retval) )
+end
+
+captive_portal.print_valid_macs = function(context)
+    local db = dba.load(config.db)
+    local macs = logic.valid_macs(db)
+    for _, mac in ipairs(macs) do
+        print ( mac )
+    end
+end
+
+captive_portal.get_mac_from_ip = function(context)
+    local ip = context[1]
+    local command = 'ping -i 0.2 -w 0.2 -c 1 '..ip..' >/dev/null; cat /proc/net/arp | grep '..ip..' | grep br-lan | awk \'{print $4}\''
+    fd = io.popen(command, 'r')
+    local output = fd:read('*all')
+    fd:close()
+    print (output)
 end
 
 -- if is main
@@ -46,8 +66,7 @@ if debug.getinfo(2).name == nil then
     action = arguments[1]
     context = ft.filter(function(row, index) return index > 1 end, arguments)
 
-    epoc, upload, download = captive_portal[action](context)
-    print( epoc..' '..upload..' '..download)
+    captive_portal[action](context)
 end
 
 return captive_portal

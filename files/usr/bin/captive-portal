@@ -1,0 +1,54 @@
+#!/bin/sh
+# requires ip6tables-mod-nat
+
+# Cleanup
+
+iptables -t mangle -D PREROUTING -j internet
+ip6tables -t mangle -D PREROUTING -j internet
+
+iptables -F internet -t mangle
+iptables -X internet -t mangle
+ip6tables -F internet -t mangle
+ip6tables -X internet -t mangle
+
+iptables -t mangle -D internet  -p tcp --dport 80 -j MARK --set-mark 99
+iptables -t mangle -D internet  -p tcp --dport 443 -j MARK --set-mark 99
+ip6tables -t mangle -D internet  -p tcp --dport 80 -j MARK --set-mark 99
+ip6tables -t mangle -D internet  -p tcp --dport 443 -j MARK --set-mark 99
+
+iptables -t nat -D PREROUTING -m mark --mark 99 -j DNAT --to-destination 10.5.1.5
+ip6tables -t nat -D PREROUTING -m mark --mark 99 -j DNAT --to-destination 2801:1e8:2::4
+
+iptables -t nat -A POSTROUTING -j MASQUERADE
+ip6tables -t nat -A POSTROUTING -j MASQUERADE
+
+# Setup
+
+iptables -t mangle -N internet
+
+voucher print_valid_macs > /tmp/validmacs
+awk 'BEGIN { FS="\t"; } { system("iptables -t mangle -A internet -m mac --mac-source "$1" -j RETURN"); }' /tmp/validmacs
+
+# iptables -t mangle -A internet -d "10.4.0.0/14" -j RETURN
+
+iptables -t mangle -A internet  -p tcp --dport 80 -j MARK --set-mark 99
+iptables -t mangle -A internet  -p tcp --dport 443 -j MARK --set-mark 99
+
+iptables -t mangle -A PREROUTING -j internet
+iptables -t nat -A PREROUTING -m mark --mark 99 -j DNAT --to-destination 10.5.1.5
+
+iptables -t nat -A POSTROUTING -j MASQUERADE
+
+ip6tables -t mangle -N internet
+
+awk 'BEGIN { FS="\t"; } { system("ip6tables -t mangle -A internet -m mac --mac-source "$1" -j RETURN"); }' /tmp/validmacs
+
+#ip6tables -t mangle -A internet -d "10.4.0.0/14" -j RETURN
+
+ip6tables -t mangle -A internet  -p tcp --dport 80 -j MARK --set-mark 99
+ip6tables -t mangle -A internet  -p tcp --dport 443 -j MARK --set-mark 99
+
+ip6tables -t mangle -A PREROUTING -j internet
+ip6tables -t nat -A PREROUTING -m mark --mark 99 -j DNAT --to-destination 2801:1e8:2::4
+
+ip6tables -t nat -A POSTROUTING -j MASQUERADE

@@ -31,7 +31,7 @@ end
 
 function dba.get_vouchers_by_voucher(db, voucherid)
     local voucher_column = functools.search(function(val) return val == 'voucher' end, db.headers)
-    return ft.filter(function(voucher) return voucher[voucher_column] == voucher end, db.data)
+    return ft.filter(function(voucher) return voucher[voucher_column] == voucherid end, db.data)
 end
 
 function dba.get_vouchers_by_mac(db, mac)
@@ -43,6 +43,10 @@ function dba.get_vouchers_by_mac(db, mac)
         end
         return false
     end, db.data)
+end
+
+function dba.get_all_vouchers(db)
+    return db.data
 end
 
 function dba.describe_values(db, row)
