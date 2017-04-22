@@ -57,7 +57,12 @@ function index()
 
     -- Rest of entries
     entry({"portal","voucher"}, call("action_voucher_admin"), _("Voucher Admin"), 80).dependent=false
-    entry({"portal","voucher", "auth"}, call("action_voucher_auth")).dependent=false
+
+    root = node()
+    root.target = alias("pportal")
+    root.index  = true
+    local auth = entry({"pportal","auth"}, call("action_voucher_auth"))
+    auth.dependent = false
 end
 
 local function add_voucher(values_map)
@@ -101,7 +106,7 @@ local function auth_voucher(values_map, ip)
     local output2 = fd2:read('*all')
     fd2:close()
 
-    return command..'\n'..output
+    return output
 end
 
 local function check_voucher(ip)
@@ -109,7 +114,7 @@ local function check_voucher(ip)
 
     mac = get_mac_from_ip( ip )
 
-    command = '/usr/bin/voucher check_voucher '..mac
+    command = '/usr/bin/voucher status '..mac
     fd = io.popen(command, 'r')
     local output = fd:read('*all')
     fd:close()
@@ -135,7 +140,10 @@ function action_voucher_auth()
     else
         result = check_voucher(ip)
     end
+    local authorized = string.find(result, '0') ~= 1
+
     luci.template.render("portal/auth_voucher",{
+        authorized=authorized,
         result=result,
     })
 end

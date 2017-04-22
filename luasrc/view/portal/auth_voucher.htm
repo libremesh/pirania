@@ -8,7 +8,12 @@ label > span {
 }
 </style>
 <b>
-  <%= result %>
+  <% if authorized then %>
+    Now you can browse.
+  <% else %>
+    You can't browse yet. Please enter a valid voucher.
+  <% end %>
+
 </b>
 <div>
   <h2>
