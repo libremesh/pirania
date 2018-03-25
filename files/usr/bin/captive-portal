@@ -1,12 +1,16 @@
 #!/bin/sh
 # requires ip6tables-mod-nat
 
+# TODO add a parallel catch-all uhttpd service that shows the captive portal locally
+
 # Cleanup
 
 ANYGW4=10.5.32.1
 ANYGW6=2801:1e8:5::1
 MESH4=10.0.0.0/8
 MESH6=2801:1e8:5::/64
+
+voucher print_valid_macs > /tmp/validmacs
 
 iptables -t mangle -D PREROUTING -j internet
 ip6tables -t mangle -D PREROUTING -j internet
@@ -33,7 +37,7 @@ ip6tables -t nat -D POSTROUTING -j MASQUERADE
 
 iptables -t mangle -N internet
 
-voucher print_valid_macs > /tmp/validmacs
+# TODO refactor this separating the macs in a separate table so each time it is renewed only this part is run, and only for the macs that change
 awk 'BEGIN { FS="\t"; } { system("iptables -t mangle -A internet -m mac --mac-source "$1" -j RETURN"); }' /tmp/validmacs
 
 iptables -t mangle -A internet -d "$MESH4" -j RETURN

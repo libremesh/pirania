@@ -4,7 +4,7 @@ local utils = require('voucher.utils')
 local config = require('voucher.config')
 local http = require('luci.http')
 
-local debug = require('voucher.debugtools')
+local debugtools = require('voucher.debugtools')
 
 -- /usr/lib/lua/luci/controller/voucher.lua
 
@@ -50,6 +50,7 @@ local function add_voucher(values_map)
     amountofmacsallowed = values_map.amountofmacsallowed
 
 
+    -- TODO change this to a function call in lua
     command = '/usr/bin/voucher add_voucher '..key..' '..voucher..' '..expiretime..' '..uploadlimit..' '..downloadlimit..' '..amountofmacsallowed
     fd = io.popen(command)
     fd:close()
@@ -102,7 +103,7 @@ function action_voucher_admin()
     end
     luci.template.render("admin_portal/voucher",{
         vouchers=utils.from_csv_to_table(config.db),
-        form=debug.print_r(luci.http.formvalue())
+        form=debugtools.print_r(luci.http.formvalue())
     })
 end
 

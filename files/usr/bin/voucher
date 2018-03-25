@@ -11,6 +11,11 @@ local context
 
 captive_portal = {}
 
+--[[
+--Checks if a context(defined by a mac and a voucher code)
+--is authorized to be used, and associates the mac to the
+--voucher code if needed.
+--]]
 captive_portal.auth_voucher = function(context)
     local mac = context[1]
     local voucher = context[2]
@@ -22,6 +27,9 @@ captive_portal.auth_voucher = function(context)
     print ( unpack(retval) )
 end
 
+--[[
+--Checks if the mac of the given context is allowed to browse.
+--]]
 captive_portal.status = function(context)
     local mac = context[1]
 
@@ -29,6 +37,9 @@ captive_portal.status = function(context)
     print ( logic.status(db, mac) )
 end
 
+--[[
+--Adds a voucher to the db with the params defined by context.
+--]]
 captive_portal.add_voucher = function(context)
     local key = context[1]
     local voucher = context[2]
@@ -43,21 +54,13 @@ captive_portal.add_voucher = function(context)
     print ( unpack(retval) )
 end
 
-captive_portal.print_valid_macs = function(context)
+-- TODO refactor eliminate bash portion awk sed bash-isms
+captive_portal.print_valid_macs = function()
     local db = dba.load(config.db)
     local macs = logic.valid_macs(db)
     for _, mac in ipairs(macs) do
         print ( mac )
     end
-end
-
-captive_portal.get_mac_from_ip = function(context)
-    local ip = context[1]
-    local command = 'ping -i 0.2 -w 0.2 -c 1 '..ip..' >/dev/null; cat /proc/net/arp | grep '..ip..' | grep br-lan | awk \'{print $4}\''
-    fd = io.popen(command, 'r')
-    local output = fd:read('*all')
-    fd:close()
-    print (output)
 end
 
 -- if is main
