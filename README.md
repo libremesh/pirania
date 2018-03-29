@@ -1,5 +1,7 @@
 # Voucher interface for Captive Portal
 
+ALPHA Software, don't use in production.
+
 ![PITBULL](https://j.gifs.com/X6vnX8.gif)
 
 This tool allows an administrator to manage a voucher system to get through the gateway.
@@ -33,4 +35,24 @@ Not clear yet, but would be something like:
   * add the libremesh software feed to opkg
   * opkg install <captive portal>
   * opkg install voucher
+
+# How it works
+
+It uses iptables rules to filter inbound connections outside the mesh network.
+
+# TODO
+
+## Basic
+
+  * Migrate interface from LuCi to LiMe-App
+    * Migrate API to ubus
+  * Add config sharing through mesh
+  * Schedule a regular update of the rules
+
+## Secondary
+
+  * Remove unnecesary compatibility with nodogsplash
+  * Add a config file so allowed/restricted ip ranges can be parametrized (ips reachable by abundant connections vs through scarse/costly ones)
+  * Tune the rule apply script so it doesn't have to renew all rules each time, but just do the small change related to what happend (like add a new mac, remove a mac)
+
 
