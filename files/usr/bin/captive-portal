@@ -4,12 +4,32 @@
 # TODO add a parallel catch-all uhttpd service that shows the captive portal locally
 
 # Cleanup
+echo "Starting captive portal service."
+echo "You'll need to configure the web server running within the network."
+read -p "What is the webservers ipv4 address: " ANYGW4
+read -p "What is the webservers ipv6 address: " ANYGW6
 
-ANYGW4=10.5.32.1
-ANYGW6=2801:1e8:5::1
 MESH4=10.0.0.0/8
 MESH6=2801:1e8:5::/64
 
+# Clear ipv4
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -t nat -F
+iptables -t mangle -F
+iptables -F
+iptables -X
+# Clear ipv6
+ip6tables -P INPUT ACCEPT
+ip6tables -P FORWARD ACCEPT
+ip6tables -P OUTPUT ACCEPT
+ip6tables -t nat -F
+ip6tables -t mangle -F
+ip6tables -F
+ip6tables -X
+
+# Get valid macs from db
 voucher print_valid_macs > /tmp/validmacs
 
 iptables -t mangle -D PREROUTING -j internet
