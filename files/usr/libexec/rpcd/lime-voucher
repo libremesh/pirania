@@ -78,7 +78,7 @@ end
 local function get_clients(msg)
     local result = {}
     result.clients = {}
-    local output = shell("for ip in $(ip n show | grep -v IP | awk '{print $1}' | sort -ut '|' -k 1,2); do grep $ip /tmp/dhcp.leases; done")
+    local output = shell("for mac in $(ip neigh show | sed -n '/.* \(..:..:..:..:..:..\) .*/s//\1/p | sort -u'); do grep $mac /tmp/dhcp.leases; done")
     for line in output:gmatch("[^\n]+") do
         local words = {}
         for w in line:gmatch("%S+") do if w ~= "" then table.insert(words, w) end end
