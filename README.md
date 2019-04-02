@@ -51,8 +51,8 @@ files/
      /usr/bin/captive-portal sets up iptables rules to capture traffic
      /etc/init.d/pirania-uhttpd starts a uhttpd on port 2055 that replies any request with a redirect towards a preset URL
 
-     /usr/libexec/rpcd/lime-voucher ubus pirania API (this is used by the web frontend)
-     /usr/share/rpcd/acl.d/voucher.json ACL for the ubus pirania API
+     /usr/libexec/rpcd/pirania ubus pirania API (this is used by the web frontend)
+     /usr/share/rpcd/acl.d/pirania.json ACL for the ubus pirania API
 
 luasrc/ contains the luci-app to manage vouchers
 ```
