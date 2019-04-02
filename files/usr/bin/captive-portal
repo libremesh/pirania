@@ -1,67 +1,50 @@
 #!/bin/sh
-# requires ip6tables-mod-nat
+# requires ip6tables-mod-nat and ipset
 
-# TODO add a parallel catch-all uhttpd service that shows the captive portal locally
+for ipvX in ipv4 ipv6 ; do
+	if [ "$ipvX" = "ipv4" ] ; then
+		iptables=iptables
+		family=inet
+		icmp=icmp
+	else
+		iptables=ip6tables
+		family=inet6
+		icmp=icmpv6
+	fi
 
-# Cleanup
+	### Cleanup
+	for interface in br-lan anygw bmx+; do
+		$iptables -t mangle -D PREROUTING -i $interface -j pitbull
+	done
 
-ANYGW4=10.5.32.1
-ANYGW6=2801:1e8:5::1
-MESH4=10.0.0.0/8
-MESH6=2801:1e8:5::/64
+	$iptables -t nat -D PREROUTING -j pitbull
+	$iptables -t filter -D FORWARD -j pitbull
 
-voucher print_valid_macs > /tmp/validmacs
+	for table in mangle nat filter; do
+		$iptables -t $table -F pitbull
+		$iptables -t $table -X pitbull
+	done
 
-iptables -t mangle -D PREROUTING -j internet
-ip6tables -t mangle -D PREROUTING -j internet
+	### Buildup
+	for table in mangle nat filter; do
+		$iptables -t $table -N pitbull
+	done
 
-iptables -F internet -t mangle
-iptables -X internet -t mangle
-ip6tables -F internet -t mangle
-ip6tables -X internet -t mangle
+	$iptables -t nat -A PREROUTING -j pitbull
+	$iptables -t filter -A FORWARD -j pitbull
 
-iptables -t mangle -D internet  -p tcp --dport 80 -j MARK --set-mark 99
-iptables -t mangle -D internet  -p tcp --dport 443 -j MARK --set-mark 99
-ip6tables -t mangle -D internet  -p tcp --dport 80 -j MARK --set-mark 99
-ip6tables -t mangle -D internet  -p tcp --dport 443 -j MARK --set-mark 99
+	for interface in br-lan anygw bmx+; do
+		$iptables -t mangle -A PREROUTING -i $interface -j pitbull
+	done
 
-iptables -t nat -D PREROUTING -m mark --mark 99 -j DNAT --to-destination $ANYGW4
-ip6tables -t nat -D PREROUTING -m mark --mark 99 -j DNAT --to-destination $ANYGW6
+	ipset -exist create pitbull-auth-macs hash:mac timeout 0
+	ipset -exist create pitbull-whitelist-$ipvX hash:net family $family
+	$iptables -t mangle -A pitbull -p $icmp -j RETURN
+	$iptables -t mangle -A pitbull -m set --match-set pitbull-auth-macs src -j RETURN
+	$iptables -t mangle -A pitbull -m set --match-set pitbull-whitelist-$ipvX  dst -j RETURN
+	$iptables -t mangle -A pitbull -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
+	$iptables -t mangle -A pitbull -p tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
 
-iptables -t nat -D POSTROUTING -j MASQUERADE
-ip6tables -t nat -D POSTROUTING -j MASQUERADE
-
-# Setup
-
-# IPv4
-
-iptables -t mangle -N internet
-
-# TODO refactor this separating the macs in a separate table so each time it is renewed only this part is run, and only for the macs that change
-awk 'BEGIN { FS="\t"; } { system("iptables -t mangle -A internet -m mac --mac-source "$1" -j RETURN"); }' /tmp/validmacs
-
-iptables -t mangle -A internet -d "$MESH4" -j RETURN
-
-iptables -t mangle -A internet  -p tcp --dport 80 -j MARK --set-mark 99
-iptables -t mangle -A internet  -p tcp --dport 443 -j MARK --set-mark 99
-
-iptables -t mangle -A PREROUTING -j internet
-iptables -t nat -A PREROUTING -m mark --mark 99 -j DNAT --to-destination $ANYGW4
-
-iptables -t nat -A POSTROUTING -j MASQUERADE
-
-# IPv6
-
-ip6tables -t mangle -N internet
-
-awk 'BEGIN { FS="\t"; } { system("ip6tables -t mangle -A internet -m mac --mac-source "$1" -j RETURN"); }' /tmp/validmacs
-
-ip6tables -t mangle -A internet -d "$MESH6" -j RETURN
-
-ip6tables -t mangle -A internet  -p tcp --dport 80 -j MARK --set-mark 99
-ip6tables -t mangle -A internet  -p tcp --dport 443 -j MARK --set-mark 99
-
-ip6tables -t mangle -A PREROUTING -j internet
-ip6tables -t nat -A PREROUTING -m mark --mark 99 -j DNAT --to-destination $ANYGW6
-
-ip6tables -t nat -A POSTROUTING -j MASQUERADE
+	$iptables -t nat    -A pitbull -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
+	$iptables -t filter -A pitbull -m mark --mark 0x66/0xff -j REJECT
+done
