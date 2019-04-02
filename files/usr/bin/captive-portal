@@ -39,6 +39,14 @@ for ipvX in ipv4 ipv6 ; do
 
 	ipset -exist create pirania-auth-macs hash:mac timeout 0
 	ipset -exist create pirania-whitelist-$ipvX hash:net family $family
+
+	for item in $(uci get pirania.base_config.whitelist_$ipvX); do
+		ipset -exist add pirania-whitelist-$ipvX $item
+	done
+
+	ipset -exist add pirania-whitelist-ipv4 $(uci get network.lan.ipaddr)
+	ipset -exist add pirania-whitelist-ipv6 $(uci get network.lan.ip6addr)
+
 	$iptables -t mangle -A pirania -p $icmp -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX  dst -j RETURN
