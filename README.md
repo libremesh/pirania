@@ -61,15 +61,15 @@ luasrc/ contains the luci-app to manage vouchers
 
 ## Basic
 
-  * Migrate interface from LuCi to LiMe-App
-    * Migrate API to ubus
-  * Add config sharing through mesh
-  * Schedule a regular update of the rules
+  * [ ] Migrate interface from LuCi to LiMe-App
+    * [x] Migrate API to ubus
+  * [ ] Add config sharing through mesh
+  * [ ] Schedule a regular update of the rules
 
 ## Secondary
 
-  * Remove unnecesary compatibility with nodogsplash
-  * Add a config file so allowed/restricted ip ranges can be parametrized (ips reachable by abundant connections vs through scarse/costly ones)
-  * Tune the rule apply script so it doesn't have to renew all rules each time, but just do the small change related to what happend (like add a new mac, remove a mac)
+  * [ ] Remove unnecesary compatibility with nodogsplash
+  * [x] Add a config file so allowed/restricted ip ranges can be parametrized (ips reachable by abundant connections vs through scarse/costly ones)
+  * [ ] Tune the rule apply script so it doesn't have to renew all rules each time, but just do the small change related to what happend (like add a new mac, remove a mac)
 
 
