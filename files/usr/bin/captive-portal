@@ -14,37 +14,37 @@ for ipvX in ipv4 ipv6 ; do
 
 	### Cleanup
 	for interface in br-lan anygw bmx+; do
-		$iptables -t mangle -D PREROUTING -i $interface -j pitbull
+		$iptables -t mangle -D PREROUTING -i $interface -j pirania
 	done
 
-	$iptables -t nat -D PREROUTING -j pitbull
-	$iptables -t filter -D FORWARD -j pitbull
+	$iptables -t nat -D PREROUTING -j pirania
+	$iptables -t filter -D FORWARD -j pirania
 
 	for table in mangle nat filter; do
-		$iptables -t $table -F pitbull
-		$iptables -t $table -X pitbull
+		$iptables -t $table -F pirania
+		$iptables -t $table -X pirania
 	done
 
 	### Buildup
 	for table in mangle nat filter; do
-		$iptables -t $table -N pitbull
+		$iptables -t $table -N pirania
 	done
 
-	$iptables -t nat -A PREROUTING -j pitbull
-	$iptables -t filter -A FORWARD -j pitbull
+	$iptables -t nat -A PREROUTING -j pirania
+	$iptables -t filter -A FORWARD -j pirania
 
 	for interface in br-lan anygw bmx+; do
-		$iptables -t mangle -A PREROUTING -i $interface -j pitbull
+		$iptables -t mangle -A PREROUTING -i $interface -j pirania
 	done
 
-	ipset -exist create pitbull-auth-macs hash:mac timeout 0
-	ipset -exist create pitbull-whitelist-$ipvX hash:net family $family
-	$iptables -t mangle -A pitbull -p $icmp -j RETURN
-	$iptables -t mangle -A pitbull -m set --match-set pitbull-auth-macs src -j RETURN
-	$iptables -t mangle -A pitbull -m set --match-set pitbull-whitelist-$ipvX  dst -j RETURN
-	$iptables -t mangle -A pitbull -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
-	$iptables -t mangle -A pitbull -p tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
+	ipset -exist create pirania-auth-macs hash:mac timeout 0
+	ipset -exist create pirania-whitelist-$ipvX hash:net family $family
+	$iptables -t mangle -A pirania -p $icmp -j RETURN
+	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
+	$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX  dst -j RETURN
+	$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
+	$iptables -t mangle -A pirania -p tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
 
-	$iptables -t nat    -A pitbull -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
-	$iptables -t filter -A pitbull -m mark --mark 0x66/0xff -j REJECT
+	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
+	$iptables -t filter -A pirania -m mark --mark 0x66/0xff -j REJECT
 done

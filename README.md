@@ -49,10 +49,10 @@ files/
      /usr/lib/lua/voucher/ contains lua libraries used by /usr/bin/voucher
      /usr/bin/voucher is a CLI to manage the db (has functions add_voucher, auth_voucher, get_valid_macs, etc)
      /usr/bin/captive-portal sets up iptables rules to capture traffic
-     /etc/init.d/pitbull-uhttpd starts a uhttpd on port 2055 that replies any request with a redirect towards a preset URL
+     /etc/init.d/pirania-uhttpd starts a uhttpd on port 2055 that replies any request with a redirect towards a preset URL
 
-     /usr/libexec/rpcd/lime-voucher ubus pitbull API (this is used by the web frontend)
-     /usr/share/rpcd/acl.d/voucher.json ACL for the ubus pitbull API
+     /usr/libexec/rpcd/lime-voucher ubus pirania API (this is used by the web frontend)
+     /usr/share/rpcd/acl.d/voucher.json ACL for the ubus pirania API
 
 luasrc/ contains the luci-app to manage vouchers
 ```

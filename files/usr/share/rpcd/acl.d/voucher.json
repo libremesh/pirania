@@ -1,22 +1,22 @@
 {
     "unauthenticated": {
-        "description": "Pitbull voucher public access",
+        "description": "pirania voucher public access",
         "write": {
             "ubus": {
-                    "lime-voucher": [ "auth_voucher", "get_clients", "print_valid_macs" ]
+                    "pirania": [ "auth_voucher", "get_clients", "print_valid_macs" ]
             }
         }
     },
     "root": {
-        "description": "Pitbull administration access",
+        "description": "pirania administration access",
         "write": {
             "ubus": {
-                    "lime-voucher": ["*"]
+                    "pirania": ["*"]
             }
         },
         "read": {
             "ubus": {
-                    "lime-voucher": ["*"]
+                    "pirania": ["*"]
             }
         }
     }
