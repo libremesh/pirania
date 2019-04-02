@@ -6,10 +6,12 @@ for ipvX in ipv4 ipv6 ; do
 		iptables=iptables
 		family=inet
 		icmp=icmp
+		ipaddr=ipaddr
 	else
 		iptables=ip6tables
 		family=inet6
 		icmp=icmpv6
+		ipaddr=ip6addr
 	fi
 
 	### Cleanup
@@ -25,6 +27,30 @@ for ipvX in ipv4 ipv6 ; do
 		$iptables -t $table -X pirania
 	done
 
+	ipset destroy pirania-whitelist-$ipvX
+done
+
+ipset destroy pirania-auth-macs
+ipset -exist create pirania-auth-macs hash:mac timeout 0
+
+for mac in $(voucher print_valid_macs) ; do
+	ipset -exist add pirania-auth-macs $mac
+done
+
+for ipvX in ipv4 ipv6 ; do
+	if [ "$ipvX" = "ipv4" ] ; then
+		iptables=iptables
+		family=inet
+		icmp=icmp
+		ipaddr=ipaddr
+	else
+		iptables=ip6tables
+		family=inet6
+		icmp=icmpv6
+		ipaddr=ip6addr
+	fi
+
+
 	### Buildup
 	for table in mangle nat filter; do
 		$iptables -t $table -N pirania
@@ -37,19 +63,13 @@ for ipvX in ipv4 ipv6 ; do
 		$iptables -t mangle -A PREROUTING -i $interface -j pirania
 	done
 
-	ipset -exist create pirania-auth-macs hash:mac timeout 0
 	ipset -exist create pirania-whitelist-$ipvX hash:net family $family
 
 	for item in $(uci get pirania.base_config.whitelist_$ipvX); do
 		ipset -exist add pirania-whitelist-$ipvX $item
 	done
 
-	ipset -exist add pirania-whitelist-ipv4 $(uci get network.lan.ipaddr)
-	ipset -exist add pirania-whitelist-ipv6 $(uci get network.lan.ip6addr)
-
-	for mac in $(voucher print_valid_macs) ; do
-		ipset -exist add pirania-auth-macs $mac
-	done
+	ipset -exist add pirania-whitelist-$ipvX $(uci get network.lan.$ipaddr)
 
 	$iptables -t mangle -A pirania -p $icmp -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
