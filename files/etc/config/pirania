@@ -1,5 +1,5 @@
 config base_config 'base_config'
-    option db_path '/etc/voucher/db.csv'
+    option db_path '/etc/pirania/db.csv'
     # TODO implement bandwidth capping
     option uploadlimit '10000000'
     option downloadlimit '50000'

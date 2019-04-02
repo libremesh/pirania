@@ -1,12 +1,12 @@
 local uci = require("uci")
-local portal_config ='voucher'
+local pirania_config = 'pirania'
 
 ucicursor = uci.cursor()
 
 config = {
-    db = ucicursor:get(portal_config, 'base_config', 'db_path'),
-    uploadlimit = ucicursor:get(portal_config, 'base_config', 'uploadlimit'),
-    downloadlimit = ucicursor:get(portal_config, 'base_config', 'downloadlimit')
+    db = ucicursor:get(pirania_config, 'base_config', 'db_path'),
+    uploadlimit = ucicursor:get(pirania_config, 'base_config', 'uploadlimit'),
+    downloadlimit = ucicursor:get(pirania_config, 'base_config', 'downloadlimit')
 }
 
 return config
