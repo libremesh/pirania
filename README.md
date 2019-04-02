@@ -40,6 +40,19 @@ Not clear yet, but would be something like:
 
 It uses iptables rules to filter inbound connections outside the mesh network.
 
+## General overview of file hierarchy and function
+
+```
+files/
+     /etc/config/voucher is the UCI config
+     /etc/voucher/db.csv (default path) contains the database of vouchers
+     /usr/lib/lua/voucher/ contains lua libraries used by /usr/bin/voucher
+     /usr/bin/voucher is a CLI to manage the db (has functions add_voucher, auth_voucher, get_valid_macs, etc)
+     /usr/bin/captive-portal sets up iptables rules to capture traffic
+
+luasrc/ contains the luci-app to manage vouchers
+```
+
 # TODO
 
 ## Basic
