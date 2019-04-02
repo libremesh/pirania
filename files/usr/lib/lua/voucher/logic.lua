@@ -60,8 +60,8 @@ function logic.auth_voucher(db, mac, voucherid)
             use_voucher(db, voucher, mac)
         end
 
-        local ret_val = { get_limit_from_rawvoucher(db, voucher) }
-        return get_limit_from_rawvoucher(db, voucher)
+        local expiretime, uploadlimit, downloadlimit = get_limit_from_rawvoucher(db, voucher)
+        return expiretime, uploadlimit, downloadlimit
     end
 
     return '0', '0', '0'

@@ -53,7 +53,6 @@ local function auth_voucher(msg)
     result.voucher = voucher
     shell('voucher auth_voucher '..mac..' '..voucher)
     printJson(result)
-    shell('ipset add pirania-auth-macs '..mac)
 end
 
 local function print_valid_macs(msg)
