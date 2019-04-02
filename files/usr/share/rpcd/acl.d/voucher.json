@@ -8,7 +8,7 @@
         }
     },
     "root": {
-        "description": "Pitubll administration access",
+        "description": "Pitbull administration access",
         "write": {
             "ubus": {
                     "lime-voucher": ["*"]
