@@ -75,21 +75,6 @@ local function status(msg)
     printJson(result);
 end
 
-local function get_clients(msg)
-    local result = {}
-    result.clients = {}
-    local output = shell("for mac in $(ip neigh show | sed -n '/.* \(..:..:..:..:..:..\) .*/s//\1/p | sort -u'); do grep $mac /tmp/dhcp.leases; done")
-    for line in output:gmatch("[^\n]+") do
-        local words = {}
-        for w in line:gmatch("%S+") do if w ~= "" then table.insert(words, w) end end
-        local mac = words[2]
-        local ip = words[3]
-        local station = words[4]
-        table.insert(result.clients, { station=station, ip=ip, mac=mac })
-    end
-    printJson(result);
-end
-
 local methods = {
   add_voucher = {
     key = 'value',
@@ -101,8 +86,7 @@ local methods = {
   },
   auth_voucher = { mac = 'value', voucher = 'value' },
   print_valid_macs = { no_params = 0 },
-  status = { no_params = 0 },
-  get_clients = { no_params = 0 }
+  status = { no_params = 0 }
 }
 
 if arg[1] == 'list' then
@@ -116,7 +100,6 @@ if arg[1] == 'call' then
   elseif   arg[2] == 'auth_voucher'	        then auth_voucher(msg)
   elseif   arg[2] == 'print_valid_macs'	    then print_valid_macs(msg)
   elseif   arg[2] == 'status'	            then status(msg)
-  elseif   arg[2] == 'get_clients'	        then get_clients(msg)
   else                                      printJson({ error = "Method not found" })
   end
 end
