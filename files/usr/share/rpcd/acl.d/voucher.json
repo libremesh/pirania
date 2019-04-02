@@ -1,0 +1,23 @@
+{
+    "unauthenticated": {
+        "description": "Pitbull voucher public access",
+        "write": {
+            "ubus": {
+                    "lime-voucher": [ "auth_voucher", "get_clients", "print_valid_macs" ]
+            }
+        }
+    },
+    "root": {
+        "description": "Pitubll administration access",
+        "write": {
+            "ubus": {
+                    "lime-voucher": ["*"]
+            }
+        },
+        "read": {
+            "ubus": {
+                    "lime-voucher": ["*"]
+            }
+        }
+    }
+}
