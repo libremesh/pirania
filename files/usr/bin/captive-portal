@@ -33,7 +33,7 @@ for ipvX in ipv4 ipv6 ; do
 	$iptables -t nat -A PREROUTING -j pirania
 	$iptables -t filter -A FORWARD -j pirania
 
-	for interface in br-lan anygw bmx+; do
+	for interface in $(uci get pirania.base_config.catch_interfaces); do
 		$iptables -t mangle -A PREROUTING -i $interface -j pirania
 	done
 
