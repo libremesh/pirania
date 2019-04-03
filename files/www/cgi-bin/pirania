@@ -12,29 +12,26 @@ client_ip="$REMOTE_ADDR"
 
 client_mac="$(/usr/bin/ip neigh show to $client_ip | sed -n '/.* \(..:..:..:..:..:..\) .*/s//\1/p' | sort -u)"
 
-. /usr/bin/vale.sh check "$client_mac"
+voucher_expiretime="$(voucher status "${client_mac:-unknown_mac}" | cut -f 1)"
 
-if [ "$vale_expire_epoch" -gt "$now_epoch" ] ; then
-  message="Your voucher is still valid, until $(date +'<b>%F</b> at %T' -d @$vale_expire_epoch)"
-  message="$message<br>Just click OK (no need to type anything)."
+tolower() { echo "$@" | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz ; }
+voucher="$(tolower "${QUERY_STRING##voucher=}" | tr -c -d abcdefghijklmnopqrstuvwxyz1234567890)"
+
+if [ -n "$voucher" ] ; then
+  voucher_expiretime="$(voucher auth_voucher "${client_mac:-unknown_mac}" "${voucher}" | cut -f 1)"
+fi
+
+if [ "$voucher_expiretime" -gt "0" ] ; then
+  voucher_expire_epoch=$(($voucher_expiretime+$(date +%s)))
+  message="Your voucher is valid, until $(date +'<b>%F</b> at %T' -d @$voucher_expire_epoch)"
 else
   message="There's no voucher linked to this device."
-  if [ -n "$free_first_use_epoch" ] ; then
-    message="$message<br>You already used the <em>$free_keyword</em> voucher this month"
-    message="$message<br>$(date +'on date %F at %T' -d @$free_first_use_epoch)."
-    if [ "$free_remaining_secs" -gt 0 ] ; then
-      message="$message<br>You can continue browsing for <b>$(($free_remaining_secs/3600)) hours</b>"
-      message="$message<br>(until $(date +'%F at %T' -d @$free_expire_epoch))."
-      message="$message<br>Just click OK (no need to type anything)."
-    else
-      message="$message<br>It's vital to have at least a <b>minimum</b> engagement"
-      message="$message<br>and <b>social ties</b> with the community, therefore"
-      message="$message<br><b>your web browsing is blocked until you obtain a voucher</b>."
-    fi
-  else
-    message="$message<br>If you're in a hurry, get 24hs of web browsing with the special voucher <b>$free_keyword</b>,"
-    message="$message<br>but note you can only enjoy this privilege once a month."
-  fi
+  form='
+    <form method="GET" action="">
+      <input type="text" name="voucher" id="voucher" autocomplete="off" value="" size="12"/>
+      <input type="submit" value="OK" /><br/>
+    </form>
+    '
 fi
 
 cat <<EOF
@@ -48,6 +45,7 @@ cat <<EOF
 <body>
 <div>
   <div style="text-align: center">$message</div>
+  <div style="text-align: center">$form</div>
 </div>
 </body>
 </html>
