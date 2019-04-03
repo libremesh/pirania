@@ -10,8 +10,7 @@ echo
 gatewayname="$HTTP_HOST"
 client_ip="$REMOTE_ADDR"
 
-arping -q -w 5 -I br-lan -f "$client_ip"
-client_mac=$(cat /proc/net/arp | egrep "^$client_ip\>" | grep -o ..:..:..:..:..:.. | head -n 1)
+client_mac="$(/usr/bin/ip neigh show to $client_ip | sed -n '/.* \(..:..:..:..:..:..\) .*/s//\1/p' | sort -u)"
 
 . /usr/bin/vale.sh check "$client_mac"
 
