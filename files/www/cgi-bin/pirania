@@ -39,18 +39,16 @@ fi
 
 cat <<EOF
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8" />
 <title>$title</title>
 <meta HTTP-EQUIV='Pragma' CONTENT='no-cache'>
-<link rel="stylesheet" href="http://$gatewayname/nds/splash.css">
 </head>
-<body class="bg-c2b6">
-<div id="bienvenida-page">
-  <div class="acentro" style="text-align: center">$message</div>
+<body>
+<div>
+  <div style="text-align: center">$message</div>
 </div>
-<script type="text/javascript" src="http://$gatewayname/nds/iframeResizer.contentWindow.min.js"></script>
 </body>
 </html>
 EOF
