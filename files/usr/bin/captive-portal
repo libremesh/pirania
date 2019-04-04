@@ -76,7 +76,9 @@ for ipvX in ipv4 ipv6 ; do
 	$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX  dst -j RETURN
 	$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
 	$iptables -t mangle -A pirania -p tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
+	$iptables -t mangle -A pirania -p udp --dport 53 -j MARK --set-mark 0x53/0xff  # or is dport 53, re-set mark for REDIRECT
 
 	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
+	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x53/0xff -j REDIRECT --to-ports 53
 	$iptables -t filter -A pirania -m mark --mark 0x66/0xff -j REJECT
 done
