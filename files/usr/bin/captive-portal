@@ -28,6 +28,8 @@ for ipvX in ipv4 ipv6 ; do
 	done
 
 	ipset destroy pirania-whitelist-$ipvX
+
+	ipset destroy pirania-auth-$ipvX
 done
 
 ipset destroy pirania-auth-macs
@@ -63,6 +65,8 @@ for ipvX in ipv4 ipv6 ; do
 		$iptables -t mangle -A PREROUTING -i $interface -j pirania
 	done
 
+	ipset -exist create pirania-auth-$ipvX hash:ip family $family timeout 0
+
 	ipset -exist create pirania-whitelist-$ipvX hash:net family $family
 
 	for item in $(uci get pirania.base_config.whitelist_$ipvX); do
@@ -72,6 +76,7 @@ for ipvX in ipv4 ipv6 ; do
 	ipset -exist add pirania-whitelist-$ipvX $(uci get network.lan.$ipaddr)
 
 	$iptables -t mangle -A pirania -p $icmp -j RETURN
+	$iptables -t mangle -A pirania -m set --match-set pirania-auth-$ipvX src -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX  dst -j RETURN
 	$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
