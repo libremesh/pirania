@@ -1,0 +1,10 @@
+#!/bin/sh
+
+	mac=${1:?}
+	expiretime=${2:-0}
+	ipset -exist add pirania-auth-macs $mac timeout $expiretime
+	for x in 4 6; do
+		for ip in $(ip -$x neigh show | grep -i $mac | cut -d ' ' -f 1) ; do
+			ipset -exist add pirania-auth-ipv$x $ip
+		done
+	done
