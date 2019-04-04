@@ -35,10 +35,6 @@ done
 ipset destroy pirania-auth-macs
 ipset -exist create pirania-auth-macs hash:mac timeout 0
 
-for mac in $(voucher print_valid_macs) ; do
-	ipset -exist add pirania-auth-macs $mac
-done
-
 for ipvX in ipv4 ipv6 ; do
 	if [ "$ipvX" = "ipv4" ] ; then
 		iptables=iptables
@@ -86,4 +82,14 @@ for ipvX in ipv4 ipv6 ; do
 	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
 	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x53/0xff -j REDIRECT --to-ports 53
 	$iptables -t filter -A pirania -m mark --mark 0x66/0xff -j REJECT
+done
+
+for mac in $(voucher print_valid_macs) ; do
+	ipset -exist add pirania-auth-macs $mac
+	for ip in $(ip -4 neigh show | grep -i $mac | cut -d ' ' -f 1) ; do
+		ipset -exist add pirania-auth-ipv4 $ip
+	done
+	for ip in $(ip -6 neigh show | grep -i $mac | cut -d ' ' -f 1) ; do
+		ipset -exist add pirania-auth-ipv6 $ip
+	done
 done
