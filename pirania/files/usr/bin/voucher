@@ -4,12 +4,29 @@ local config = require('voucher.config')
 local dba = require('voucher.db')
 local logic = require('voucher.logic')
 local ft = require('voucher.functools')
+local json = require 'luci.json'
 
 local arguments
 local action
 local context
 
 captive_portal = {}
+
+local function printJson (obj)
+    print(json.encode(obj))
+end
+
+local function split(inputstr, sep)
+    if sep == nil then
+            sep = "+"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+            table.insert(t, str)
+    end
+    return t
+end
+
 
 --[[
 --Checks if a context(defined by a mac and a voucher code)
@@ -41,6 +58,42 @@ captive_portal.status = function(context)
 
     local db = dba.load(config.db)
     print ( logic.status(db, mac) )
+end
+
+-- List all
+captive_portal.list_vouchers = function()
+    local result = {}
+    local vName = 1
+    local vSecret = 2
+    local vExpire = 3
+    local vMacsAllowed = 6
+    local usedMacs = 7
+    local db = dba.load(config.db)
+    local validVouchers = ft.filter(function(row, index) return tonumber(row[vExpire]) > os.time() end, db.data)
+    for _, v in pairs(validVouchers) do
+        result[_] = {}
+        result[_].name = v[vName]
+        result[_].expires = v[vExpire]
+        result[_].voucher = v[vSecret]
+        result[_].macsAllowed = v[vMacsAllowed]
+        result[_].macs = split(v[usedMacs])    
+    end
+    printJson(result)
+end
+
+-- Remove voucher
+captive_portal.remove_voucher = function(context)
+    local result = {}
+    local voucherName = context[1]
+    local db = dba.load(config.db)
+    local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
+    if (table.getn(validVouchers) ~= table.getn(db.data)) then result.success = true
+    else result.success = false
+    end
+    local newDb = db
+    newDb.data = validVouchers
+    dba.save(config.db, newDb)
+    printJson(result)
 end
 
 --[[

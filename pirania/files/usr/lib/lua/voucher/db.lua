@@ -7,12 +7,10 @@ dba = {}
 
 local function read_db_from_csv(dbinfo)
     local rawtable = utils.from_csv_to_table(dbinfo);
-
     local table = {
         headers = rawtable[1],
         data = ft.filter(function(row, index) return index > 1 end, rawtable)
     }
-
     return table
 end
 

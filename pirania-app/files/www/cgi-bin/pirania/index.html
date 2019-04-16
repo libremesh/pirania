@@ -1,0 +1,46 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Pirania</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/loader.css">
+</head>
+
+<body>
+  <div class="sk-folding-cube">
+    <div class="sk-cube1 sk-cube"></div>
+    <div class="sk-cube2 sk-cube"></div>
+    <div class="sk-cube4 sk-cube"></div>
+    <div class="sk-cube3 sk-cube"></div>
+  </div>
+  <main class="main" style="display: none;">
+    <a class="login" href="admin.html">Login</a>
+    <div class="content">
+      <img id="content-logo" src="" alt="logo" />
+        <h1 id="content-title"></h1>
+        <p id="content-welcome"></p>
+        <p id="content-body"></p>
+        <div class="voucher">
+          <form onsubmit="event.preventDefault(); authVoucher();">
+            <label>Selecione o aparelho e entre o voucher</label>
+            <br />
+            <div id="station-list"></div>
+            <input type="text" id="voucherInput">
+            <br />
+            <input type="submit">
+          </form>
+          <h4 id="error"></h4>
+          <p id="result"></p>
+        </div>
+    </div>
+  </main>
+  <script src="js/main.js"></script>
+  <script src="js/voucher.js"></script>
+</body>
+
+</html>
