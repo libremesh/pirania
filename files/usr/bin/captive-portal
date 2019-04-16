@@ -15,7 +15,7 @@ for ipvX in ipv4 ipv6 ; do
 	fi
 
 	### Cleanup
-	for interface in br-lan anygw bmx+; do
+	for interface in br-lan anygw; do
 		$iptables -t mangle -D PREROUTING -i $interface -j pirania
 	done
 
@@ -27,11 +27,11 @@ for ipvX in ipv4 ipv6 ; do
 		$iptables -t $table -X pirania
 	done
 
-	ipset destroy pirania-whitelist-$ipvX
+	(ipset destroy pirania-whitelist-$ipvX& > /dev/null)&
 done
 
-ipset destroy pirania-auth-macs
-ipset -exist create pirania-auth-macs hash:mac timeout 0
+(ipset destroy pirania-auth-macs& >/dev/null)&
+(ipset -exist create pirania-auth-macs hash:mac timeout 0& > /dev/null)&
 
 for mac in $(voucher print_valid_macs) ; do
 	ipset -exist add pirania-auth-macs $mac
@@ -43,11 +43,13 @@ for ipvX in ipv4 ipv6 ; do
 		family=inet
 		icmp=icmp
 		ipaddr=ipaddr
+		anygw=$(uci get network.lm_net_br_lan_anygw_if.ipaddr)
 	else
 		iptables=ip6tables
 		family=inet6
 		icmp=icmpv6
 		ipaddr=ip6addr
+		anygw=[$(uci get network.lan.ip6addr | cut -d/ -f1)]
 	fi
 
 
@@ -63,20 +65,20 @@ for ipvX in ipv4 ipv6 ; do
 		$iptables -t mangle -A PREROUTING -i $interface -j pirania
 	done
 
-	ipset -exist create pirania-whitelist-$ipvX hash:net family $family
+	ipset create pirania-whitelist-$ipvX hash:net family $family
 
 	for item in $(uci get pirania.base_config.whitelist_$ipvX); do
-		ipset -exist add pirania-whitelist-$ipvX $item
+		ipset -A pirania-whitelist-$ipvX $item
 	done
 
-	ipset -exist add pirania-whitelist-$ipvX $(uci get network.lan.$ipaddr)
+	$iptables -t nat -A pirania -p udp -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
+	
+	$iptables  -t mangle -A pirania -p $icmp -j RETURN
+	$iptables  -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
+	$iptables  -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX dst -j RETURN
+	$iptables  -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
+	$iptables  -t mangle -A pirania -p tcp -m tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
 
-	$iptables -t mangle -A pirania -p $icmp -j RETURN
-	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
-	$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX  dst -j RETURN
-	$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
-	$iptables -t mangle -A pirania -p tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
-
-	$iptables -t nat    -A pirania -p tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
+	$iptables -t nat    -A pirania -p tcp -m tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
 	$iptables -t filter -A pirania -m mark --mark 0x66/0xff -j REJECT
 done
