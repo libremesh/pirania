@@ -86,13 +86,22 @@ captive_portal.remove_voucher = function(context)
     local result = {}
     local voucherName = context[1]
     local db = dba.load(config.db)
-    local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
-    if (table.getn(validVouchers) ~= table.getn(db.data)) then result.success = true
-    else result.success = false
+    local toRemove = {}
+    for _, voucher in pairs (db.data) do
+        if (voucher[1] == voucherName) then
+            toRemove = voucher
+        end
     end
-    local newDb = db
-    newDb.data = validVouchers
-    dba.save(config.db, newDb)
+    if (#toRemove > 0) then
+        result.success = true
+        toRemove[3] = 0
+        local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
+        local newDb = db
+        newDb.data = validVouchers
+        table.insert(newDb.data, toRemove)
+        dba.save(config.db, newDb)
+        else result.success = false
+    end
     printJson(result)
 end
 
