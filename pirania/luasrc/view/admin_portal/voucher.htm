@@ -1,0 +1,89 @@
+<%+header%>
+<style>
+label {
+  display: block;
+}
+label > span {
+  min-width: 15em;
+  display: inline-block;
+}
+</style>
+<div>
+  <h2>
+    Add voucher
+  </h2>
+  <form method='post'>
+    <input name='action' value='add_voucher' type='hidden'>
+    <label for='key'><span>Key</span><input name='key' placeholder='voucher key' type='input'></label>
+    <label for='voucher'><span>Voucher code</span><input name='voucher' placeholder='voucher code' type='input'></label>
+    <label for='expiretime'><span>Expire time</span><input name='expiretime' placeholder='Expire time' type='number'></label>
+    <label for='uploadlimit'><span>Upload speed Limit</span><input name='uploadlimit' placeholder='upload speed limit' type='number'></label>
+    <label for='downloadlimit'><span>Download speed Limit</span><input name='downloadlimit' placeholder='download speed limit' type='number'></label>
+    <label for='amountsofmacsallowed'><span>Amounts of devices allowed</span><input name='amountofmacsallowed' placeholder='amounts of devices allowed' type='number'></label>
+    <input value='Add' type='submit'></input>
+  </form>
+</div>
+<div id="vouchers">
+  <h2>Current vouchers</h2>
+  <table id="vouchers_table">
+    <thead>
+      <tr>
+        <% for idx, row in pairs( vouchers ) do %>
+        <% if idx == 1 then %>
+        <% for idy, column in pairs( row ) do %>
+        <th><%= column %></th>
+        <% end %>
+        <% end %>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody class="list">
+      <% for idx, row in pairs( vouchers ) do %>
+      <% if idx ~= 1 then %>
+      <tr>
+        <% for idy, column in pairs( row ) do %>
+        <td class='<%=vouchers[1][idy]%>'><%= column %></td>
+        <% end %>
+      </tr>
+      <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<script language="javascript">
+function sortTable(table, col, reverse) {
+  var tb = table.tBodies[0], // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+  tr = Array.prototype.slice.call(tb.rows, 0), // put rows into array
+  i;
+  reverse = -((+reverse) || -1);
+  tr = tr.sort(function (a, b) { // sort rows
+    return reverse // `-1 *` if want opposite order
+      * (a.cells[col].textContent.trim() // using `.textContent.trim()` for test
+          .localeCompare(b.cells[col].textContent.trim())
+        );
+  });
+  for(i = 0; i < tr.length; ++i) tb.appendChild(tr[i]); // append each row in order
+}
+function makeSortable(table) {
+  var th = table.tHead, i;
+  th && (th = th.rows[0]) && (th = th.cells);
+  if (th) i = th.length;
+  else return; // if no `<thead>` then do nothing
+  while (--i >= 0) (function (i) {
+    var dir = 1;
+    th[i].addEventListener('click', function () {sortTable(table, i, (dir = 1 - dir))});
+  }(i));
+}
+
+function makeAllSortable(parent) {
+  parent = parent || document.body;
+  var t = parent.getElementsByTagName('table'), i = t.length;
+  while (--i >= 0) makeSortable(t[i]);
+}
+
+window.onload = function () {makeSortable(document.getElementById('vouchers_table'))};
+</script>
+
+<%+footer%>

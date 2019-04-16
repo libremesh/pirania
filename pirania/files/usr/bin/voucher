@@ -4,8 +4,6 @@ local config = require('voucher.config')
 local dba = require('voucher.db')
 local logic = require('voucher.logic')
 local ft = require('voucher.functools')
-local utils = require('voucher.utils')
-
 local json = require 'luci.json'
 
 local arguments
@@ -78,7 +76,7 @@ captive_portal.list_vouchers = function()
         result[_].expires = v[vExpire]
         result[_].voucher = v[vSecret]
         result[_].macsAllowed = v[vMacsAllowed]
-        result[_].macs = split(v[usedMacs])    
+        result[_].macs = split(v[usedMacs])
     end
     printJson(result)
 end
@@ -88,22 +86,13 @@ captive_portal.remove_voucher = function(context)
     local result = {}
     local voucherName = context[1]
     local db = dba.load(config.db)
-    local toRemove = {}
-    for _, voucher in pairs (db.data) do
-        if (voucher[1] == voucherName) then
-            toRemove = voucher
-        end
+    local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
+    if (table.getn(validVouchers) ~= table.getn(db.data)) then result.success = true
+    else result.success = false
     end
-    if (#toRemove > 0) then
-        result.success = true
-        toRemove[3] = 0
-        local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
-        local newDb = db
-        newDb.data = validVouchers
-        table.insert(newDb.data, toRemove)
-        dba.save(config.db, newDb)
-        else result.success = false
-    end
+    local newDb = db
+    newDb.data = validVouchers
+    dba.save(config.db, newDb)
     printJson(result)
 end
 
@@ -124,24 +113,6 @@ captive_portal.add_voucher = function(context)
     print ( unpack(retval) )
 end
 
-captive_portal.add_many_vouchers = function(context, data)
-    local result = {}
-    local table = utils.split(data, "\n")
-    local db = dba.load(config.db)
-    local error = false
-    for _,val in pairs (table) do
-        local jdata = json.decode(val)
-        local upload = jdata.upload and jdata.upload or '10'
-        local download = jdata.download and jdata.download or '10'
-        local amountofmacsallowed = jdata.amountofmacsallowed and jdata.amountofmacsallowed or '1'
-        local res = logic.add_voucher(db, jdata.key, jdata.voucher, jdata.epoc, upload, download, amountofmacsallowed)
-        if (res == nil) then error = true end
-    end
-    result.success = not error
-    dba.save(config.db, db)
-    printJson(result) 
-end
-
 -- TODO refactor eliminate bash portion awk sed bash-isms
 captive_portal.print_valid_macs = function()
     local db = dba.load(config.db)
@@ -156,8 +127,8 @@ if debug.getinfo(2).name == nil then
     arguments = { ... }
     action = arguments[1]
     context = ft.filter(function(row, index) return index > 1 end, arguments)
-    if (action == 'add_many_vouchers') then stdin = io.stdin:read("*all") end
-    captive_portal[action](context, stdin)
+
+    captive_portal[action](context)
 end
 
 return captive_portal

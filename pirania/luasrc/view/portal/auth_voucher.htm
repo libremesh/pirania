@@ -1,0 +1,27 @@
+<style>
+label {
+  display: block;
+}
+label > span {
+    min-width: 15em;
+    display: inline-block;
+}
+</style>
+<b>
+  <% if authorized then %>
+    Now you can browse.
+  <% else %>
+    You can't browse yet. Please enter a valid voucher.
+  <% end %>
+
+</b>
+<div>
+  <h2>
+    Auth voucher
+  </h2>
+  <form method='post'>
+    <input name='action' value='auth_voucher' type='hidden'>
+    <label for='voucher'><span>Voucher code</span><input name='voucher' placeholder='voucher code' type='input'></label>
+    <input type='submit'></input>
+  </form>
+</div>

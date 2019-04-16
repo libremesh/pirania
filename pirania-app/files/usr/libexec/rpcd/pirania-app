@@ -41,7 +41,6 @@ local function get_clients(msg)
     end
     printJson(result);
 end
-  
 
 local function read_content(msg)
     local contents = ""

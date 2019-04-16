@@ -1,0 +1,62 @@
+input[type=text] {
+  padding:5px;
+  border:2px solid #ccc;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+input[type=text]:focus {
+  border-color:#333;
+}
+
+input[type=submit] {
+  padding:5px 15px;
+  background:#ccc;
+  border:0 none;
+  cursor:pointer;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.main {
+  padding: 5%;
+  text-align: center;
+  border: 10px solid white;
+  opacity: 0;
+  animation: ease-in;
+  min-height: 78vh;
+}
+.content {
+  max-width: 968px;
+  margin: 0 auto;
+}
+.login {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  text-decoration: none;
+  color: black;
+}
+.voucher {
+  padding-top: 100px;
+}
+.voucher form {
+  height: 500px;
+  display: flex;
+  flex-flow: column;
+  align-content: center;
+  align-items: center;
+}
+.admin {
+  margin-top: 50px;
+  padding: 10px;
+  border: 1px solid black;
+}
+.admin-form form, .admin-content form {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  align-content: center;
+  margin: 0 auto;
+  max-width: 300px;
+}
