@@ -91,5 +91,11 @@ utils.string_split = function(inputstr, sep)
     return t
 end
 
+utils.split = function(string, sep)
+  local ret = {}
+  for token in string.gmatch(string, "[^"..sep.."]+") do table.insert(ret, token) end
+  return ret
+end
+
 return utils
 
