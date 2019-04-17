@@ -71,7 +71,7 @@ for ipvX in ipv4 ipv6 ; do
 		ipset -exist add pirania-whitelist-$ipvX $item
 	done
 
-	$iptables -t nat -A pirania -|p udp -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
+	$iptables -t nat -A pirania -p udp -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
 
 	$iptables -t mangle -A pirania -p $icmp -j RETURN
 	$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
