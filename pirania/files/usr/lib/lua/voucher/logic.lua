@@ -39,12 +39,12 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
             expiretime = tostring( tonumber( voucher.expiretime ) - os.time())
             uploadlimit = voucher.uploadlimit ~= '0' and voucher.uploadlimit or config.uploadlimit
             downloadlimit = voucher.downloadlimit ~= '0' and voucher.downloadlimit or config.downloadlimit
-
-            return expiretime, uploadlimit, downloadlimit
+            valid = voucher.usedmacs < voucher.amountofmacsallowed and '1' or '0'
+            return expiretime, uploadlimit, downloadlimit, valid
         end
     end
 
-    return '0', '0', '0'
+    return '0', '0', '0', '0'
 end
 
 function logic.valid_voucher(db, row)
@@ -55,16 +55,15 @@ function logic.auth_voucher(db, mac, voucherid)
     local rawvouchers = dba.get_vouchers_by_voucher(db, voucherid)
     if (rawvouchers ~= nil) then
         local voucher = get_valid_rawvoucher(db, rawvouchers)
-
-        if(voucher ~= nil) then
+        local expiretime, uploadlimit, downloadlimit, valid = get_limit_from_rawvoucher(db, voucher)
+        if(voucher ~= nil and valid == '1') then
             use_voucher(db, voucher, mac)
         end
 
-        local expiretime, uploadlimit, downloadlimit = get_limit_from_rawvoucher(db, voucher)
-        return expiretime, uploadlimit, downloadlimit
+        return expiretime, uploadlimit, downloadlimit, valid
     end
 
-    return '0', '0', '0'
+    return '0', '0', '0', '0'
 end
 
 function logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)
@@ -100,7 +99,7 @@ function logic.status(db, mac)
         end
     end
 
-    return '0', '0', '0'
+    return '0', '0', '0', '0'
 end
 
 return logic

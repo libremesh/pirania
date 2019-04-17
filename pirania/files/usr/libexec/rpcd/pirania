@@ -76,7 +76,7 @@ local function auth_voucher(msg)
     result.mac = mac
     result.voucher = voucher
     local output = shell('voucher auth_voucher '..mac..' '..voucher)
-    local success = string.sub(output, 1, 1) ~= '0'
+    local success = string.sub(output, 1, 1, 1) ~= '0'
     result.success = success
     printJson(result)
 end
