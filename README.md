@@ -1,8 +1,10 @@
-# Voucher interface for Captive Portal
+# Pirania
 
-ALPHA Software, don't use in production.
+## Voucher and Captive Portal solution for community networks
 
-![PITBULL](https://j.gifs.com/X6vnX8.gif)
+*ALPHA Software, don't use in production*
+
+![PIRANHA](https://media.giphy.com/media/2l8A8Dm9ledkQ/giphy.gif)
 
 This tool allows an administrator to manage a voucher system to get through the gateway.
 
@@ -12,7 +14,7 @@ It could be used in a community that wants to share an Internet connection and f
 
 This are the currently implemented features:
   * Runs directly from the OpenWRT/LEDE router: no need for extra hardware
-  * Integrates it's administration with LuCI
+  * Integrates it's administration with Ubus
   * Has a command-line interface
 
 We have planned:
@@ -25,16 +27,14 @@ All planned features are accesible at: https://github.com/libremesh/voucher/issu
 
 ## Prerequisites
 
-This software assumes that will be running on a OpenWRT/LEDE distribution (because uses uci for config), and requires a captive portal with whom to talk to.
-
-For now it is compatible just with Nodogsplash, but adding compatibility with others is on our roadmap.
+This software assumes that will be running on a OpenWRT/LEDE distribution (because uses uci for config).
 
 ## Install
 
 Not clear yet, but would be something like:
   * add the libremesh software feed to opkg
-  * opkg install <captive portal>
-  * opkg install voucher
+  * opkg install pirania
+  * opkg install pirania-app
 
 # How it works
 
@@ -68,7 +68,6 @@ luasrc/ contains the luci-app to manage vouchers
 
 ## Secondary
 
-  * [ ] Remove unnecesary compatibility with nodogsplash
   * [x] Add a config file so allowed/restricted ip ranges can be parametrized (ips reachable by abundant connections vs through scarse/costly ones)
   * [ ] Tune the rule apply script so it doesn't have to renew all rules each time, but just do the small change related to what happend (like add a new mac, remove a mac)
 
