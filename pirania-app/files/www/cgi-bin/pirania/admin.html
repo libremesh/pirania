@@ -37,10 +37,24 @@
           <label>Nome</label>
           <input type="text" id="adminInputKey">
           <label>Dias</label>
-          <input type="text" id="adminInputDays">
+          <input id="adminInputDays" type="number" value="1" min="1">
           <h3 id="voucherSecret"></h3>
           <input type="submit">
         </form>
+      </div>
+      <div class="admin-create-many" style=" display: none; ">
+        <h3>Criar muitos vouchers</h3>
+        <br />
+        <form onsubmit="event.preventDefault(); createManyVouchers();">
+          <label>Nome</label>
+          <input type="text" id="adminManyInputKey">
+          <label>Dias</label>
+          <input type="number" value="1" min="1" id="adminManyInputDays">
+          <label>Número de vouchers</label>
+          <input id="adminManyInputVouchers" type="number" value="1" min="1" max="100">
+          <input type="submit">
+        </form>
+        <h3 id="many-result"></h3>
       </div>
       <div class="admin-content" style=" display: none; ">
         <h3>Mudar conteúdo</h3>

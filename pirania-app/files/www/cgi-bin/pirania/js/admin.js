@@ -39,6 +39,54 @@ function compress(e) {
   }
 }
 
+function createManyVouchers () {
+  const key = document.getElementById('adminManyInputKey').value
+  const days = document.getElementById('adminManyInputDays').value
+  const numberVouchers = document.getElementById('adminManyInputVouchers').value
+  const daysInMs = days * 86400000
+  const epoc = new Date().getTime() + daysInMs
+  const vouchers = []
+  for (let index = 0; index < numberVouchers; index++) {
+    vouchers.push({
+      key: `${key}-${makeid(3)}`,
+      voucher: makeid(8),
+      epoc,
+    })
+  }
+  console.log('VOUCHERS', vouchers)
+  const form = {
+    id: 99,
+    jsonrpc: '2.0',
+    method: 'call',
+    params:[
+      session,
+      'pirania',
+      'add_many_vouchers',
+      {
+        vouchers,
+      },
+    ]
+  }
+  fetch(url, {
+    method: 'POST',
+    body: JSON.stringify(form),
+    headers: {
+      'Access-Control-Allow-Origin': 'http://thisnode.info'
+    },
+  })
+  .then(parseJSON)
+  .then(res => {
+    console.log('RES', res)
+    if (res.result[1] && res.result[1].success) {
+      document.getElementById('adminManyInputKey').value = ''
+      document.getElementById('adminManyInputDays').value  = 1
+      document.getElementById('adminManyInputVouchers').value  = 1
+      document.getElementById('many-result').innerHTML = 'Sucesso!'
+    }
+  })
+  .catch(err => console.log(err))
+}
+
 function createVoucher () {
   const key = document.getElementById('adminInputKey').value
   const secret = makeid(8)
@@ -248,10 +296,9 @@ function adminAuth () {
   .then((res) => {
     if (res.result[1]) {
       session = res.result[1].ubus_rpc_session
-      const login = document.querySelector('.admin-login')
-      login.style.display = 'none'
-      const admin = document.querySelector('.admin-form')
-      admin.style.display = 'block'
+      document.querySelector('.admin-login').style.display = 'none'
+      document.querySelector('.admin-form').style.display = 'block'
+      document.querySelector('.admin-create-many').style.display = 'block'
       const adminContent = document.querySelector('.admin-content')
       adminContent.style.display = 'block'
       const { backgroundColor, title, welcome, body } = content

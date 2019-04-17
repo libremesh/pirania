@@ -52,7 +52,7 @@ input[type=submit] {
   padding: 10px;
   border: 1px solid black;
 }
-.admin-form form, .admin-content form {
+.admin-form form, .admin-content form, .admin-create-many form {
   display: flex;
   flex-flow: column;
   align-items: center;
