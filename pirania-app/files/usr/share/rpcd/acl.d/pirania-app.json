@@ -3,7 +3,7 @@
         "description": "Pirania public access",
         "write": {
             "ubus": {
-                    "pirania-app": [ "get_clients", "read_content", "write_content" ]
+                    "pirania-app": [ "get_clients", "read_content" ]
             }
         }
     },
