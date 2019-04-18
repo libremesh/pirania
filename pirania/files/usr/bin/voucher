@@ -18,6 +18,13 @@ local function printJson (obj)
     print(json.encode(obj))
 end
 
+local function shell(command)
+    local handle = io.popen(command)
+    local result = handle:read("*a")
+    handle:close()
+    return result
+end
+
 local function split(inputstr, sep)
     if sep == nil then
             sep = "+"
@@ -27,6 +34,19 @@ local function split(inputstr, sep)
             table.insert(t, str)
     end
     return t
+end
+
+-- Change portal url
+captive_portal.url = function(context)
+    local url = ''
+    if (context[1] == 'show') then
+        local output = shell("uci get pirania.base_config.portal_url")
+        url = string.gsub(output, "%s+", "")
+    else
+        url = context[1] and context[1] or "http://thisnode.info/portal"
+        os.execute(string.format("uci set pirania.base_config.portal_url=%q", url))
+    end
+    print(url)
 end
 
 

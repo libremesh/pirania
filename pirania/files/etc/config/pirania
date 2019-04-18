@@ -1,4 +1,5 @@
 config base_config 'base_config'
+    option portal_url 'http://thisnode.info/portal'
     option db_path '/etc/pirania/db.csv'
     # TODO implement bandwidth capping
     option uploadlimit '10000000'
