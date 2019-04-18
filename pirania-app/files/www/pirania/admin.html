@@ -1,0 +1,88 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Pirania | Admin</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/loader.css">
+</head>
+
+<body>
+  <main class="main" style="display: none;">
+    <div class="sk-folding-cube">
+      <div class="sk-cube1 sk-cube"></div>
+      <div class="sk-cube2 sk-cube"></div>
+      <div class="sk-cube4 sk-cube"></div>
+      <div class="sk-cube3 sk-cube"></div>
+    </div>
+    <a href="/"><img id="content-logo" src="" alt="logo" /></a>
+    <div class="admin">
+      <div class="admin-login">
+        <form onsubmit="event.preventDefault(); adminAuth();">
+          <label>Login admin</label>
+          <br />
+          <input type="password" id="adminInput">
+          <br />
+          <input type="submit">
+        </form>
+      </div>
+      <div class="admin-form" style=" display: none; ">
+        <h3>Criar novo voucher</h3>
+        <br />
+        <form onsubmit="event.preventDefault(); createVoucher();">
+          <label>Nome</label>
+          <input type="text" id="adminInputKey">
+          <label>Dias</label>
+          <input id="adminInputDays" type="number" value="1" min="1">
+          <h3 id="voucherSecret"></h3>
+          <input type="submit">
+        </form>
+      </div>
+      <div class="admin-create-many" style=" display: none; ">
+        <h3>Criar muitos vouchers</h3>
+        <br />
+        <form onsubmit="event.preventDefault(); createManyVouchers();">
+          <label>Nome</label>
+          <input type="text" id="adminManyInputKey">
+          <label>Dias</label>
+          <input type="number" value="1" min="1" id="adminManyInputDays">
+          <label>Número de vouchers</label>
+          <input id="adminManyInputVouchers" type="number" value="1" min="1" max="100">
+          <input type="submit">
+        </form>
+        <h3 id="many-result"></h3>
+      </div>
+      <div class="admin-content" style=" display: none; ">
+        <h3>Mudar conteúdo</h3>
+        <br />
+        <form onsubmit="event.preventDefault(); updateContent();">
+          <label>Titulo</label>
+          <input type="text" id="adminInputTitle">
+          <label>Bem vindo</label>
+          <textarea rows="3" cols="50" id="adminInputWelcome"></textarea>
+          <label>Corpo</label>
+          <textarea rows="10" cols="50" id="adminInputBody"></textarea>
+          <label>Cor de fundo</label>
+          <input type="color" id="adminInputBackground">
+          <div id="logo-upload">
+            <input id="logo-file" type="file" accept="image/*">
+            <br />
+          </div>
+          <input type="submit">
+        </form>
+        <div id="voucher-list">
+          <button onclick="listVouchers()" id="voucher-list-button">Listar vouchers</button>
+        </div>
+        </div>
+      </div>
+      <h4 id="error"></h4>
+  </main>
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+
+</html>
