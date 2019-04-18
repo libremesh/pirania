@@ -71,8 +71,7 @@ captive_portal.list_vouchers = function()
     local vMacsAllowed = 6
     local usedMacs = 7
     local db = dba.load(config.db)
-    local validVouchers = ft.filter(function(row, index) return tonumber(row[vExpire]) > os.time() end, db.data)
-    for _, v in pairs(validVouchers) do
+    for _, v in pairs(db.data) do
         result[_] = {}
         result[_].name = v[vName]
         result[_].expires = v[vExpire]
