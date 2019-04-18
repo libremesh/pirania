@@ -2,6 +2,7 @@
 
 local utils = require('voucher.utils')
 local ft = require('voucher.functools')
+local hooks = require('voucher.hooks')
 
 dba = {}
 
@@ -25,6 +26,7 @@ local function write_db_to_csv(csvname, db)
     end
 
     utils.from_table_to_csv(csvname, data)
+    hooks("db_change")
 end
 
 function dba.get_vouchers_by_voucher(db, voucherid)
