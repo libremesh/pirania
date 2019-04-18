@@ -5,9 +5,10 @@ local dba = require('voucher.db')
 local logic = require('voucher.logic')
 local ft = require('voucher.functools')
 local utils = require('voucher.utils')
-
+local uci = require('uci')
 local json = require 'luci.json'
 
+local uci_cursor = uci.cursor()
 local arguments
 local action
 local context
@@ -36,15 +37,15 @@ local function split(inputstr, sep)
     return t
 end
 
--- Change portal url
+-- Show or change portal url
 captive_portal.url = function(context)
     local url = ''
     if (context[1] == 'show') then
-        local output = shell("uci get pirania.base_config.portal_url")
-        url = string.gsub(output, "%s+", "")
+        url = uci_cursor:get("pirania", "base_config", "portal_url")
     else
         url = context[1] and context[1] or "http://thisnode.info/portal"
-        os.execute(string.format("uci set pirania.base_config.portal_url=%q", url))
+        uci_cursor:set("pirania", "base_config", "portal_url", url)
+        uci_cursor:commit("pirania")
     end
     print(url)
 end

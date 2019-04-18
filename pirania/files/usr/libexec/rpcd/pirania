@@ -11,6 +11,9 @@ require "ubus"
 local json = require 'luci.json'
 local ft = require('voucher.functools')
 local utils = require('voucher.utils')
+local uci = require('uci')
+
+local uci_cursor = uci.cursor()
 
 local function printJson (obj)
     print(json.encode(obj))
@@ -94,6 +97,22 @@ local function print_valid_macs(msg)
     printJson(result);
 end
 
+local function show_url(msg)
+    local result = {}
+    local url = uci_cursor:get("pirania", "base_config", "portal_url")
+    result.url = url
+    printJson(result);
+end
+
+local function change_url(msg)
+    local result = {}
+    local url = msg.url
+    uci_cursor:set("pirania", "base_config", "portal_url", url)
+    uci_cursor:commit("pirania")
+    result.url = url
+    printJson(result);
+end
+
 
 local methods = {
   add_voucher = {
@@ -109,7 +128,8 @@ local methods = {
   print_valid_macs = { no_params = 0 },
   list_vouchers = { no_params = 0 },
   remove_voucher = { name = 'value' },
-
+  show_url = { no_params = 0 },
+  change_url = { url = 'value' },
 }
 
 if arg[1] == 'list' then
@@ -120,11 +140,13 @@ if arg[1] == 'call' then
   local msg = io.read()
   msg = json.decode(msg)
   if       arg[2] == 'add_voucher'	        then add_voucher(msg)
-  elseif   arg[2] == 'add_many_vouchers'	  then add_many_vouchers(msg)
+  elseif   arg[2] == 'add_many_vouchers'	then add_many_vouchers(msg)
   elseif   arg[2] == 'auth_voucher'	        then auth_voucher(msg)
   elseif   arg[2] == 'print_valid_macs'	    then print_valid_macs(msg)
-  elseif   arg[2] == 'list_vouchers'	      then list_vouchers(msg)
-  elseif   arg[2] == 'remove_voucher'	      then remove_voucher(msg)
+  elseif   arg[2] == 'list_vouchers'	    then list_vouchers(msg)
+  elseif   arg[2] == 'remove_voucher'	    then remove_voucher(msg)
+  elseif   arg[2] == 'show_url'	            then show_url(msg)
+  elseif   arg[2] == 'change_url'	        then change_url(msg)
   else                                      printJson({ error = "Method not found" })
   end
 end
