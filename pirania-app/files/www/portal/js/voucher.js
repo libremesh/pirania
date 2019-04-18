@@ -53,10 +53,13 @@ function authVoucher () {
   .then(parseJSON)
   .then((res) => {
     // debugger
-    console.log('res', res)
     if (res && res.result[1] && res.result[1].success) {
       document.getElementById('result').innerHTML = 'Sucesso!'
       init()
+      const urlTo = window.location.href.split('=')[1]
+      if (urlTo) {
+        window.location.href = `http://${urlTo}`
+      }
     } else if (res && res.result[1] && !res.result[1].success) {
       document.getElementById('result').innerHTML = 'Senha incorreta!'
     } else if (res.error) {

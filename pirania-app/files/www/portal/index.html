@@ -19,7 +19,7 @@
     <div class="sk-cube3 sk-cube"></div>
   </div>
   <main class="main" style="display: none;">
-    <a class="login" href="admin.html">Login</a>
+    <a class="login" href="admin.html">Admin</a>
     <div class="content">
       <img id="content-logo" src="" alt="logo" />
         <h1 id="content-title"></h1>
@@ -27,7 +27,7 @@
         <p id="content-body"></p>
         <div class="voucher">
           <form onsubmit="event.preventDefault(); authVoucher();">
-            <label>Selecione o aparelho e entre o voucher</label>
+            <label class="int-selectVoucher"></label>
             <br />
             <div id="station-list"></div>
             <input type="text" id="voucherInput">
@@ -41,6 +41,7 @@
   </main>
   <script src="js/main.js"></script>
   <script src="js/voucher.js"></script>
+  <script src="js/int.js"></script>
 </body>
 
 </html>
