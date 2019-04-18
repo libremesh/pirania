@@ -1,10 +1,9 @@
-# Pirania
+![PIRANHA](https://i.imgur.com/kHWUNOu.png)
 
 ## Voucher and Captive Portal solution for community networks
 
 *ALPHA Software, don't use in production*
 
-![PIRANHA](https://i.imgur.com/kHWUNOu.png)
 
 This tool allows an administrator to manage a voucher system to get through the gateway.
 
