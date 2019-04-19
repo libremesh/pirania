@@ -16,5 +16,6 @@ start() {
 
 stop () {
     /usr/lib/lua/voucher/hooks.lua stop
+    $PROG stop
     logger -t pirania "Portal captive - to be implemented"
 }
