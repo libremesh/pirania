@@ -79,9 +79,12 @@ function logic.valid_macs(db)
 
     for _, rawvoucher in ipairs( rawvouchers ) do
         if logic.valid_voucher(db, rawvoucher) then
-            currentmacs = utils.string_split(dba.describe_values(db, rawvoucher).usedmacs, '+')
+            local voucher = dba.describe_values(db, rawvoucher)
+            currentmacs = utils.string_split(voucher.usedmacs, '+')
             for _, mac in ipairs( currentmacs ) do
-                table.insert(macs, mac)
+                if (_ <=  tonumber(voucher.amountofmacsallowed)) then
+                    table.insert(macs, mac)
+                end
             end
         end
     end
