@@ -22,24 +22,25 @@
     <a class="login" href="admin.html">Admin</a>
     <div class="content">
       <img id="content-logo" src="" alt="logo" />
-        <h1 id="content-title"></h1>
-        <p id="content-welcome"></p>
-        <p id="content-body"></p>
-        <div class="voucher">
-          <form onsubmit="event.preventDefault(); authVoucher();">
-            <label class="int-selectVoucher"></label>
-            <br />
-            <div id="station-list"></div>
-            <input type="text" id="voucherInput">
-            <br />
-            <input type="submit">
-          </form>
-          <h4 id="error"></h4>
-          <p id="result"></p>
-        </div>
+      <h1 id="content-title"></h1>
+      <p id="content-welcome"></p>
+      <p id="content-body"></p>
+      <div class="voucher">
+        <form onsubmit="event.preventDefault(); authVoucher();">
+          <label class="int-selectVoucher"></label>
+          <br />
+          <div id="station-list"></div>
+          <input type="text" id="voucherInput">
+          <br />
+          <input type="submit">
+        </form>
+        <h4 id="error"></h4>
+        <p id="result"></p>
+      </div>
     </div>
   </main>
-  <script src="js/main.js"></script>
+  <script src="js/ubusFetch.js"></script>
+  <script src="js/content.js"></script>
   <script src="js/voucher.js"></script>
   <script src="js/int.js"></script>
 </body>

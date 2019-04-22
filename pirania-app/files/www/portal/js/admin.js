@@ -54,37 +54,16 @@ function createManyVouchers () {
     })
   }
   console.log('VOUCHERS', vouchers)
-  const form = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      session,
-      'pirania',
-      'add_many_vouchers',
-      {
-        vouchers,
-      },
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(form),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
-    },
-  })
-  .then(parseJSON)
-  .then(res => {
-    console.log('RES', res)
-    if (res.result[1] && res.result[1].success) {
-      document.getElementById('adminManyInputKey').value = ''
-      document.getElementById('adminManyInputDays').value  = 1
-      document.getElementById('adminManyInputVouchers').value  = 1
-      document.getElementById('many-result').innerHTML = 'Sucesso!'
-    }
-  })
-  .catch(err => console.log(err))
+  ubusFetch('pirania', 'add_many_vouchers', { vouchers }, session)
+    .then(res => {
+      if (res.success) {
+        document.getElementById('adminManyInputKey').value = ''
+        document.getElementById('adminManyInputDays').value  = 1
+        document.getElementById('adminManyInputVouchers').value  = 1
+        document.getElementById('many-result').innerHTML = 'Sucesso!'
+      }
+    })
+    .catch(err => console.log(err))
 }
 
 function createVoucher () {
@@ -93,121 +72,50 @@ function createVoucher () {
   const days = document.getElementById('adminInputDays').value
   const daysInMs = days * 86400000
   const epoc = new Date().getTime() + daysInMs
-  const form = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      session,
-      'pirania',
-      'add_voucher',
-      {
-        epoc,
-        key,
-        upload: 10,
-        download: 10,
-        amountofmacsallowed: 3,
-        secret,
-      },
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(form),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
+  ubusFetch(
+    'pirania',
+    'add_voucher',
+    {
+      epoc,
+      key,
+      upload: 10,
+      download: 10,
+      amountofmacsallowed: 3,
+      secret,
     },
-  })
-  .then(parseJSON)
+    session
+  )
   .then(res => {
-    console.log('RES', res)
-    if (res.result[1]) {
-      document.getElementById('adminInputKey').value = ''
-      document.getElementById('adminInputDays').value  = ''
-      document.getElementById('voucherSecret').innerHTML = secret
-    }
+    document.getElementById('adminInputKey').value = ''
+    document.getElementById('adminInputDays').value  = ''
+    document.getElementById('voucherSecret').innerHTML = secret
   })
   .catch(err => console.log(err))
 }
 
 function removeVoucher (name) {
-  const form = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      session,
-      'pirania',
-      'remove_voucher',
-      {
-        name,
-      },
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(form),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
-    },
-  })
-  .then(parseJSON)
-  .then((res) => {
-    if (res && res.result[1]) {
-      console.log(res.result[1])
-    } else if (res.error) {
-      console.log(res.error)
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
-      ubusError = true
-    }
-  })
-  .catch((err) => {
-    console.log('Erro no Ubus', err)
+  ubusFetch('pirania', 'remove_voucher', { name }, session)
+  .then(res => console.log(res))
+  .catch(err => {
+    console.log(err)
     document.getElementById('error').innerHTML = 'Erro no Ubus'
-    ubusError = true
   })
 }
 
 function listVouchers () {
-  const form = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      session,
-      'pirania',
-      'list_vouchers',
-      {},
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(form),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
-    },
+  ubusFetch('pirania', 'list_vouchers', {}, session)
+  .then(res => {
+    const vouchers = res.vouchers
+    console.log(vouchers)
+    document.getElementById('voucher-list-button').style.display = 'none'
+    vouchers.map(v => {
+      const elem = document.createElement('div');
+      elem.innerHTML = v.name+' : '+v.voucher+` <a onclick="removeVoucher('${v.name}')">X</a>`
+      document.getElementById("voucher-list").appendChild(elem)
+    })
   })
-  .then(parseJSON)
-  .then((res) => {
-    if (res && res.result[1]) {
-      const vouchers = res.result[1].vouchers
-      console.log(vouchers)
-      document.getElementById('voucher-list-button').style.display = 'none'
-      vouchers.map(v => {
-        const elem = document.createElement('div');
-        elem.innerHTML = v.name+' : '+v.voucher+` <a onclick="removeVoucher('${v.name}')">X</a>`
-        document.getElementById("voucher-list").appendChild(elem)
-      })
-    } else if (res.error) {
-      console.log(res.error)
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
-      ubusError = true
-    }
-  })
-  .catch((err) => {
-    console.log('Erro no Ubus', err)
+  .catch(err => {
     document.getElementById('error').innerHTML = 'Erro no Ubus'
-    ubusError = true
   })
 }
 
@@ -217,99 +125,64 @@ function updateContent () {
   const welcome = document.getElementById('adminInputWelcome').value
   const body = document.getElementById('adminInputBody').value
   let logo = uploadedLogo || content.logo
-  const form = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      session,
-      'pirania-app',
-      'write_content',
-      {
-        backgroundColor,
-        title,
-        welcome,
-        body,
-        logo,
-      },
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(form),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
+  ubusFetch(
+    'pirania-app',
+    'write_content',
+    {
+      backgroundColor,
+      title,
+      welcome,
+      body,
+      logo,
     },
+    session
+  )
+  .then(res => {
+    content = res
+    const { backgroundColor, title, welcome, body, logo } = content
+    document.body.style.backgroundColor = backgroundColor
+    const contentLogo = document.getElementById('content-logo')
+    const contentTitle = document.getElementById('content-title')
+    const contentWelcome = document.getElementById('content-welcome')
+    const contentBody = document.getElementById('content-body')
+    if (contentLogo) contentLogo.src = logo
+    if (contentTitle) contentTitle.innerHTML = title
+    if (contentWelcome) contentWelcome.innerHTML = welcome
+    if (contentBody) contentBody.innerHTML = body
   })
-  .then(parseJSON)
-  .then((res) => {
-    if (res && res.result[1]) {
-      content = res.result[1]
-      const { backgroundColor, title, welcome, body, logo } = content
-      document.body.style.backgroundColor = backgroundColor
-      const contentLogo = document.getElementById('content-logo')
-      const contentTitle = document.getElementById('content-title')
-      const contentWelcome = document.getElementById('content-welcome')
-      const contentBody = document.getElementById('content-body')
-      if (contentLogo) contentLogo.src = logo
-      if (contentTitle) contentTitle.innerHTML = title
-      if (contentWelcome) contentWelcome.innerHTML = welcome
-      if (contentBody) contentBody.innerHTML = body
-    } else if (res.error) {
-      console.log(res.error)
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
-      ubusError = true
-    }
-  })
-  .catch((err) => {
-    console.log('Erro no Ubus', err)
+  .catch(err => {
     document.getElementById('error').innerHTML = 'Erro no Ubus'
-    ubusError = true
   })
 }
 
 function adminAuth () {
   const password = document.getElementById('adminInput').value
-  const authAdminForm = {
-    id: 99,
-    jsonrpc: '2.0',
-    method: 'call',
-    params:[
-      '00000000000000000000000000000000',
-      'session',
-      'login',
-      {
-        username: 'root',
-        password,
-        timeout: 5000,
-      },
-    ]
-  }
-  fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(authAdminForm),
-    headers: {
-      'Access-Control-Allow-Origin': 'http://thisnode.info'
-    },
-  })
-  .then(parseJSON)
-  .then((res) => {
-    if (res.result[1]) {
-      session = res.result[1].ubus_rpc_session
-      document.querySelector('.admin-login').style.display = 'none'
-      document.querySelector('.admin-form').style.display = 'block'
-      document.querySelector('.admin-create-many').style.display = 'block'
-      const adminContent = document.querySelector('.admin-content')
-      adminContent.style.display = 'block'
-      const { backgroundColor, title, welcome, body } = content
-      document.getElementById('adminInputTitle').value = title
-      document.getElementById('adminInputWelcome').value = welcome
-      document.getElementById('adminInputBody').value = body
-      document.getElementById('adminInputBackground').value = backgroundColor
-
+  ubusFetch(
+    'session',
+    'login',
+    {
+      username: 'root',
+      password,
+      timeout: 5000,
     }
+  )
+  .then(res => {
+    session = res.ubus_rpc_session
+    document.querySelector('.admin-login').style.display = 'none'
+    document.querySelector('.admin-form').style.display = 'block'
+    document.querySelector('.admin-create-many').style.display = 'block'
+    const adminContent = document.querySelector('.admin-content')
+    adminContent.style.display = 'block'
+    const { backgroundColor, title, welcome, body } = content
+    document.getElementById('adminInputTitle').value = title
+    document.getElementById('adminInputWelcome').value = welcome
+    document.getElementById('adminInputBody').value = body
+    document.getElementById('adminInputBackground').value = backgroundColor
+
   })
-  .catch(err => console.log(err))
+  .catch(err => {
+    console.log(err)
+  })
 }
 
 document.getElementById("logo-file").addEventListener("change", function (event) {
