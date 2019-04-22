@@ -61,13 +61,18 @@ local function add_voucher(msg)
     local upload = msg.upload
     local download = msg.download
     local amountofmacsallowed = msg.amountofmacsallowed
-    result.key = key
-    result.secret = secret
-    result.epoc = epoc
-    result.upload = upload
-    result.download = download
-    result.amountofmacsallowed = amountofmacsallowed
-    shell('voucher add_voucher '..key..' '..secret..' '..epoc..' '..download..' '..upload..' '..amountofmacsallowed)
+    local output = shell('voucher add_voucher '..key..' '..secret..' '..epoc..' '..download..' '..upload..' '..amountofmacsallowed)
+    local parsed = string.gsub(output, "%s+", "")
+    if tonumber(parsed) == 0 then
+        result.success = false
+    else
+        result.key = key
+        result.secret = secret
+        result.epoc = epoc
+        result.upload = upload
+        result.download = download
+        result.amountofmacsallowed = amountofmacsallowed
+    end
     printJson(result)
 end
 
