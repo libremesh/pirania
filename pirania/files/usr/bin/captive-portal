@@ -90,7 +90,7 @@ set_rules () {
 }
 
 # check if captive-portal is enabled in /etc/config/pirania
-enabled=$(uci get pirania.base_config.enabled)
+enable=$(uci get pirania.base_config.enabled)
 
 if  [ "$1" = "start" ]; then
 	echo "Running captive-portal"
