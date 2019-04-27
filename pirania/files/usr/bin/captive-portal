@@ -76,7 +76,7 @@ set_rules () {
 			ipset -exist add pirania-whitelist-$ipvX $item
 		done
 
-		$iptables -t nat -A pirania -p udp -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
+		$iptables -t nat -A pirania -p udp  -m set ! --match-set pirania-whitelist-$ipvX src -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
 
 		$iptables -t mangle -A pirania -p $icmp -j RETURN
 		$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
@@ -100,7 +100,7 @@ if  [ "$1" = "start" ]; then
 elif [ "$1" = "clean" ] || [ "$1" = "stop" ] ; then
 	clean
 	exit
-elif [ "$enable" = "1" ]; then
+elif [ "$enabled" = "1" ]; then
 	clean
 	set_rules
 	exit

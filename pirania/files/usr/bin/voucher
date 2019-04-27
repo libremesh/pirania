@@ -137,11 +137,21 @@ captive_portal.add_voucher = function(context)
     local upload = context[4] and context[4] or '0'
     local download = context[5] and context[5] or '0'
     local amountofmacsallowed = context[6] and context[6] or '0'
+    local exists = false
 
     local db = dba.load(config.db)
-    local retval = { logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)}
-    dba.save(config.db, db)
-    print ( unpack(retval) )
+    for _, v in pairs (db.data) do
+        if (v[1] == key) then
+            exists = true
+        end
+    end
+    if exists == false then
+        local retval = { logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)}
+        dba.save(config.db, db)
+        print ( unpack(retval) )
+    else
+        print(0)
+    end
 end
 
 captive_portal.add_many_vouchers = function(context, data)
