@@ -1,14 +1,11 @@
 let session = null
 let uploadedLogo = null
 
-
 function xDaysFromNow (days) {
   let date = new Date()
   let newDate = date.setDate(date.getDate() + parseInt(days))
   return newDate.toString()
 }
-
-
 
 function makeid(length) {
   var text = ""
@@ -19,26 +16,26 @@ function makeid(length) {
 }
 
 function compress(e) {
-  const fileName = e.target.files[0].name;
-  const reader = new FileReader();
-  reader.readAsDataURL(e.target.files[0]);
+  const fileName = e.target.files[0].name
+  const reader = new FileReader()
+  reader.readAsDataURL(e.target.files[0])
   reader.onload = event => {
-    const img = new Image();
-    img.src = event.target.result;
+    const img = new Image()
+    img.src = event.target.result
     img.onload = () => {
-      const elem = document.createElement('canvas');
-      const width = 50;
-      const scaleFactor = width / img.width;
-      elem.width = width;
-      elem.height = img.height * scaleFactor;
-      const ctx = elem.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, img.height * scaleFactor);              
+      const elem = document.createElement('canvas')
+      const width = 50
+      const scaleFactor = width / img.width
+      elem.width = width
+      elem.height = img.height * scaleFactor
+      const ctx = elem.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, img.height * scaleFactor)              
       ctx.canvas.toBlob((blob) => {
         const file = new File([blob], fileName, {
             type: 'image/jpeg',
             lastModified: Date.now()
-        });
-      }, 'image/jpeg', 1);
+        })
+      }, 'image/jpeg', 1)
       console.log(ctx.canvas.toDataURL("image/jpeg"))
       uploadedLogo = ctx.canvas.toDataURL("image/jpeg")
       document.getElementById("logo-upload").appendChild(elem)
@@ -194,10 +191,8 @@ function adminAuth () {
     hide(errorElem)
     session = res.ubus_rpc_session
     document.querySelector('.admin-login').style.display = 'none'
-    document.querySelector('.admin-form').style.display = 'block'
-    document.querySelector('.admin-create-many').style.display = 'block'
+    document.querySelector('#tabs').classList.remove('hidden')
     const adminContent = document.querySelector('.admin-content')
-    adminContent.style.display = 'block'
     const { backgroundColor, title, welcome, body } = content
     document.getElementById('adminInputTitle').value = title
     document.getElementById('adminInputWelcome').value = welcome

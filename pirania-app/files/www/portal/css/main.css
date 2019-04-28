@@ -1,16 +1,47 @@
-input[type=text] {
-  padding: 5px;
-  border: 2px solid #ccc;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+a {
+  text-decoration: none;
 }
 
-input[type=text]:focus {
+input[type=number] {
+  /*for absolutely positioning spinners*/
+  position: relative;
+  padding: 5px;
+  padding-right: 25px;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: inner-spin-button !important;
+  width: 25px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+}
+
+
+input[type=text],
+input[type=number] {
+  padding: 5px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+}
+
+input[type=text]:focus,
+input[type=number]:focus {
   border-color: #333;
 }
 
-input[type=submit] {
-  padding: 5px 15px;
+input[type=submit],
+button {
+  padding: 10px 25px;
   background: #ccc;
   border: 0 none;
   cursor: pointer;
@@ -20,7 +51,11 @@ input[type=submit] {
 
 input,
 textarea {
-  max-width: 95%;
+  max-width: 100%;
+  padding: 5px;
+  border: 2px solid #ccc;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
 }
 
 select {
@@ -76,6 +111,49 @@ select option {
   min-height: 90vh;
 }
 
+/* Tabs */
+.tab-nav {
+  margin: 0;
+  padding: 0;
+}
+
+.tab-link {
+  margin-right: 5px;
+  padding: 10px 20px;
+  color: #fff;
+  display: inline-block;
+  background-color: #b3b3b3;
+}
+
+.tab-link:last-child {
+  margin-right: 0;
+}
+
+.tab-link:hover {
+  color: #6d6d6d;
+}
+
+.tab-link.is-active {
+  color: lightcoral;
+  background-color: #e7e7e7;
+}
+
+/* Tab Content */
+.tab-contents svg {
+  height: 15px;
+  width: 15px;
+}
+
+.tab-content {
+  display: none;
+  /* background-color: #e7e7e7; */
+}
+
+.tab-content.is-active {
+  display: block;
+  padding: 20px;
+}
+
 .content {
   max-width: 968px;
   margin: 0 auto;
@@ -105,24 +183,43 @@ select option {
   width: 250px;
 }
 
-.admin {
+.admin-login,
+#tabs {
   margin-top: 50px;
   padding: 10px;
-  border: 1px solid black;
 }
 
-.admin-form form,
+.admin-login {
+  border: 1px solid #444;
+}
+
+.admin-login form,
+.admin-create form,
 .admin-content form,
 .admin-create-many form {
   display: flex;
   flex-flow: column;
   align-items: center;
   align-content: center;
+  justify-content: space-around;
   margin: 0 auto;
   max-width: 300px;
+  min-height: 20vh;
 }
 
-#result,
+.admin-create form {
+  min-height: 35vh;
+}
+
+.admin-create-many form {
+  min-height: 45vh;
+}
+
+.admin-content form {
+  min-height: 100vh;
+}
+
+
 #error {
   margin: 0 auto;
   text-align: center;
@@ -139,4 +236,11 @@ select option {
   position: absolute !important;
   top: -9999px !important;
   left: -9999px !important;
+}
+
+@media only screen and (min-width: 480px) {
+  .tab-contents svg {
+    height: 32px;
+    width: 32px;
+  }
 }
