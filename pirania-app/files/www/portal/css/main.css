@@ -48,6 +48,12 @@ input[type=submit] {
   display: flex;
   flex-flow: column;
   align-items: center;
+  justify-content: space-around;
+  height: 33vh;
+}
+
+.voucher form * {
+  width: 250px;
 }
 
 .admin {
@@ -67,11 +73,21 @@ input[type=submit] {
   max-width: 300px;
 }
 
-#result {
+#result,
+#error {
   margin: 0 auto;
   text-align: center;
-  width: 60px;
-  padding: 10px 15px;
+  padding: 10px 0;
   background: darkseagreen;
   border-radius: 8px;
+}
+
+#error {
+  background: indianred;
+}
+
+.hidden {
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
 }

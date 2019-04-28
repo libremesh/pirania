@@ -12,6 +12,9 @@ const int = {
     body: 'Texto principal',
     backgroundColor: 'Cor de fundo',
     listVouchers: 'Listar vouchers',
+    success: 'Sucesso',
+    error: 'Erro',
+    invalid: 'Código incorreto',
   },
   es: {
     selectVoucher: 'Selecione el dispositivo',
@@ -23,6 +26,9 @@ const int = {
     body: 'Texto principal',
     backgroundColor: 'Color de fondo',
     listVouchers: 'Listar vouchers',
+    success: 'Sucesso',
+    error: 'Erro',
+    invalid: 'Código incorrecto',
   },
   en: {
     selectVoucher: 'Select a device and enter a voucher',
@@ -34,6 +40,9 @@ const int = {
     body: 'Main text',
     backgroundColor: 'Background color',
     listVouchers: 'List vouchers',
+    success: 'Success',
+    error: 'Error',
+    invalid: 'Invalid voucher',
   }
 }
 

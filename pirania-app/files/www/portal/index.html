@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/loader.css">
+  <link rel="stylesheet" href="css/loader2.css">
 </head>
 
 <body>
@@ -28,21 +29,19 @@
       <div class="voucher">
         <form onsubmit="event.preventDefault(); authVoucher();">
           <label class="int-selectVoucher"></label>
-          <br />
           <div id="station-list"></div>
           <input type="text" id="voucherInput">
-          <br />
           <input type="submit">
+          <p id="result" class="hidden"></p>
+          <h4 id="error" class="hidden"></h4>
         </form>
-        <h4 id="error"></h4>
-        <p id="result"></p>
       </div>
     </div>
   </main>
+  <script src="js/int.js"></script>
   <script src="js/ubusFetch.js"></script>
   <script src="js/content.js"></script>
   <script src="js/voucher.js"></script>
-  <script src="js/int.js"></script>
 </body>
 
 </html>

@@ -98,7 +98,8 @@ function removeVoucher (name) {
   .then(res => console.log(res))
   .catch(err => {
     console.log(err)
-    document.getElementById('error').innerHTML = 'Erro no Ubus'
+    errorElem.innerHTML = int[lang].error
+    show(errorElem)
   })
 }
 
@@ -115,7 +116,8 @@ function listVouchers () {
     })
   })
   .catch(err => {
-    document.getElementById('error').innerHTML = 'Erro no Ubus'
+    errorElem.innerHTML = int[lang].error
+    show(errorElem)
   })
 }
 
@@ -151,7 +153,8 @@ function updateContent () {
     if (contentBody) contentBody.innerHTML = body
   })
   .catch(err => {
-    document.getElementById('error').innerHTML = 'Erro no Ubus'
+    errorElem.innerHTML = int[lang].error
+    show(errorElem)
   })
 }
 

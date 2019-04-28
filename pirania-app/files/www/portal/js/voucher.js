@@ -26,9 +26,11 @@ const validGetClients = {
 }
 
 function authVoucher () {
-  const mac = document.getElementById('stations').value
-  const voucherElem = document.getElementById('voucherInput')
-  const voucher = voucherElem.value
+  let mac = document.getElementById('stations').value
+  let voucherElem = document.getElementById('voucherInput')
+  let voucher = voucherElem.value.toLowerCase()
+  voucherElem.after(loader)
+  show(loader)
   const authVoucherForm = {
     id: 99,
     jsonrpc: '2.0',
@@ -52,26 +54,33 @@ function authVoucher () {
   })
   .then(parseJSON)
   .then((res) => {
+    hide(loader)
     // debugger
     if (res && res.result[1] && res.result[1].success) {
-      document.getElementById('result').innerHTML = 'Sucesso!'
+      result.innerHTML = int[lang].success
+      show(result)
+      hide(errorElem)
       init()
       const urlTo = window.location.href.split('=')[1]
       if (urlTo) {
         window.location.href = `http://${urlTo}`
       }
     } else if (res && res.result[1] && !res.result[1].success) {
-      document.getElementById('result').innerHTML = 'Senha incorreta!'
+      errorElem.innerHTML = int[lang].invalid
+      show(errorElem)
     } else if (res.error) {
       console.log(res.error)
-      document.getElementById('error').innerHTML = res.error
+      errorElem.innerHTML = res.error
+      show(errorElem)
+
       ubusError = true
     }
     voucherElem.value = ''
   })
   .catch((err) => {
     console.log('Erro no Ubus', err)
-    document.getElementById('error').innerHTML = err
+    errorElem.innerHTML = err
+    show(errorElem)
     ubusError = true
   })
 
@@ -148,13 +157,15 @@ function getValidClients() {
       })
     } else if (res.error) {
       console.log(res.error)
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
+      errorElem.innerHTML = int[lang].error
+      show(errorElem)
       ubusError = true
     }
   })
   .catch((err) => {
-    console.log('Erro no Ubus', err)
-    document.getElementById('error').innerHTML = 'Erro no Ubus'
+    console.log(int[lang].error, err)
+    errorElem.innerHTML = int[lang].error
+    show(errorElem)
     ubusError = true
   })
 }
@@ -173,13 +184,13 @@ function getValidMacs () {
       validMacs = res.result[1].macs
     } else if (res.error) {
       console.log(res.error)
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
+      errorElem.innerHTML = int[lang].error
       ubusError = true
     }
   })
   .catch((err) => {
-    console.log('Erro no Ubus', err)
-    document.getElementById('error').innerHTML = 'Erro no Ubus'
+    console.log(int[lang].error, err)
+    errorElem.innerHTML = int[lang].error
     ubusError = true
   })
 }
