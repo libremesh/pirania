@@ -115,6 +115,16 @@ function removeVoucher (name) {
   })
 }
 
+function renewVoucher (name) {
+  console.log(name, xDaysFromNow(30))
+  ubusFetch('pirania', 'renew_voucher', { name, date: xDaysFromNow(30) }, session)
+  .then(res => console.log(res))
+  .catch(err => {
+    console.log(err)
+    show(errorElem)
+  })
+}
+
 function listVouchers () {
   ubusFetch('pirania', 'list_vouchers', {}, session)
   .then(res => {
@@ -156,7 +166,7 @@ function listVouchers () {
       renew.setAttribute ("stroke-width", "2" )
       renew.setAttribute ("fill", "none" )
       renew.className = 'voucher-item-renew'
-      renew.onclick = () => removeVoucher('${v.name}')
+      renew.onclick = () => renewVoucher(v.name)
       let renewPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
       renewPath.setAttribute('d', 'M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2')
       renew.appendChild(renewPath)
@@ -169,6 +179,7 @@ function listVouchers () {
       remove.setAttribute ("stroke-width", "2" )
       remove.setAttribute ("fill", "none" )
       remove.className = 'voucher-item-remove'
+      remove.onclick = () => removeVoucher(v.name)
       let removePath = document.createElementNS("http://www.w3.org/2000/svg", "path")
       removePath.setAttribute('d', 'M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6')
       remove.appendChild(removePath)

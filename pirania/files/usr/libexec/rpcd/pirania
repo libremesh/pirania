@@ -38,6 +38,14 @@ local function list_vouchers(msg)
     printJson({ vouchers = result })
 end
 
+local function renew_voucher(msg)
+    local name = msg.name
+    local date = msg.date
+    local result = {}
+    result = json.decode(shell('voucher renew_voucher '..name..' '..date))
+    printJson(result)
+  end
+
 local function remove_voucher(msg)
   local name = msg.name
   local result = {}
@@ -133,6 +141,7 @@ local methods = {
   print_valid_macs = { no_params = 0 },
   list_vouchers = { no_params = 0 },
   remove_voucher = { name = 'value' },
+  renew_voucher = { name = 'value', date = 0 },
   show_url = { no_params = 0 },
   change_url = { url = 'value' },
 }
@@ -150,6 +159,7 @@ if arg[1] == 'call' then
   elseif   arg[2] == 'print_valid_macs'	    then print_valid_macs(msg)
   elseif   arg[2] == 'list_vouchers'	    then list_vouchers(msg)
   elseif   arg[2] == 'remove_voucher'	    then remove_voucher(msg)
+  elseif   arg[2] == 'renew_voucher'	    then renew_voucher(msg)
   elseif   arg[2] == 'show_url'	            then show_url(msg)
   elseif   arg[2] == 'change_url'	        then change_url(msg)
   else                                      printJson({ error = "Method not found" })
