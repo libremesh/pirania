@@ -98,7 +98,6 @@ function removeVoucher (name) {
   .then(res => console.log(res))
   .catch(err => {
     console.log(err)
-    errorElem.innerHTML = int[lang].error
     show(errorElem)
   })
 }
@@ -170,6 +169,7 @@ function adminAuth () {
     }
   )
   .then(res => {
+    console.log('RES', res)
     session = res.ubus_rpc_session
     document.querySelector('.admin-login').style.display = 'none'
     document.querySelector('.admin-form').style.display = 'block'
@@ -181,10 +181,11 @@ function adminAuth () {
     document.getElementById('adminInputWelcome').value = welcome
     document.getElementById('adminInputBody').value = body
     document.getElementById('adminInputBackground').value = backgroundColor
-
   })
   .catch(err => {
     console.log(err)
+    show(errorElem)
+    errorElem.innerHTML = int[lang].wrongPassword
   })
 }
 

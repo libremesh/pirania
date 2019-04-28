@@ -28,14 +28,14 @@ const ubusFetch = (call, action, params, session) => new Promise ((resolve, reje
   .then((res) => {
     if (res && res.result[1]) {
       resolve(res.result[1])
-    } else if (res.error) {
+    } else {
       ubusError = true
-      reject('Ubus error')
+      reject(int[lang].error)
     }
   })
   .catch((err) => {
     console.log('Ubus error ', err)
     ubusError = true
-    reject('Ubus error')
+    reject(int[lang].error)
   })
 })

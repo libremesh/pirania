@@ -18,6 +18,11 @@ input[type=submit] {
   border-radius: 5px;
 }
 
+input,
+textarea {
+  max-width: 95%;
+}
+
 .main {
   padding: 5%;
   text-align: center;

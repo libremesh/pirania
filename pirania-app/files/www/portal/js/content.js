@@ -38,7 +38,7 @@ function getContent () {
       document.querySelector('.main').style.opacity = '1'
     })
     .catch(err => {
-      document.getElementById('error').innerHTML = 'Erro no Ubus'
+      document.getElementById('error').innerHTML = int[lang].error
     })
 }
 
