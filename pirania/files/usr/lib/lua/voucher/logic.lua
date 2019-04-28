@@ -5,6 +5,22 @@ local config = require('voucher.config')
 
 logic = {}
 
+local function shell(command)
+    local handle = io.popen(command)
+    local result = handle:read("*a")
+    handle:close()
+    return result
+end
+
+local function dateNow()
+    local output = shell('date +%s000')
+    local parsed = string.gsub(output, "%s+", "")
+    local dateNow = tonumber(parsed)
+    return dateNow
+end
+
+
+
 local function use_voucher(db, voucher, mac)
     macs = voucher[7]
 
@@ -36,7 +52,7 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
         voucher = dba.describe_values (db, rawvoucher)
 
         if tonumber(voucher.expiretime) ~= nil then
-            expiretime = tostring( tonumber( voucher.expiretime ) - os.time())
+            expiretime = tostring( tonumber( voucher.expiretime ) - dateNow())
             uploadlimit = voucher.uploadlimit ~= '0' and voucher.uploadlimit or config.uploadlimit
             downloadlimit = voucher.downloadlimit ~= '0' and voucher.downloadlimit or config.downloadlimit
             valid = voucher.usedmacs < voucher.amountofmacsallowed and '1' or '0'
@@ -48,7 +64,7 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
 end
 
 function logic.valid_voucher(db, row)
-    return tonumber(dba.describe_values(db, row).expiretime or 0) > os.time()
+    return tonumber(dba.describe_values(db, row).expiretime or 0) > dateNow()
 end
 
 function logic.auth_voucher(db, mac, voucherid)

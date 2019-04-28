@@ -50,6 +50,29 @@ captive_portal.url = function(context)
     print(url)
 end
 
+-- Update voucher date
+local function updateVoucher(name, date)
+    local result = {}
+    local db = dba.load(config.db)
+    local toRenew = {}
+    for _, voucher in pairs (db.data) do
+        if (voucher[1] == name) then
+            toRenew = voucher
+        end
+    end
+    if (#toRenew > 0) then
+        result.success = true
+        toRenew[3] = tonumber(date)
+        local validVouchers = ft.filter(function(row, index) return row[1] ~= name end, db.data)
+        local newDb = db
+        newDb.data = validVouchers
+        table.insert(newDb.data, toRenew)
+        dba.save(config.db, newDb)
+        else result.success = false
+    end
+    return result
+end
+
 
 --[[
 --Checks if a context(defined by a mac and a voucher code)
@@ -103,28 +126,17 @@ captive_portal.list_vouchers = function()
     printJson(result)
 end
 
+-- Renew voucher
+captive_portal.renew_voucher = function(context)
+    local voucherName = context[1]
+    local renewDate = context[2]
+    printJson(updateVoucher(voucherName, renewDate))
+end
+
 -- Remove voucher
 captive_portal.remove_voucher = function(context)
-    local result = {}
     local voucherName = context[1]
-    local db = dba.load(config.db)
-    local toRemove = {}
-    for _, voucher in pairs (db.data) do
-        if (voucher[1] == voucherName) then
-            toRemove = voucher
-        end
-    end
-    if (#toRemove > 0) then
-        result.success = true
-        toRemove[3] = 0
-        local validVouchers = ft.filter(function(row, index) return row[1] ~= voucherName end, db.data)
-        local newDb = db
-        newDb.data = validVouchers
-        table.insert(newDb.data, toRemove)
-        dba.save(config.db, newDb)
-        else result.success = false
-    end
-    printJson(result)
+    printJson(updateVoucher(voucherName, 0))
 end
 
 --[[
