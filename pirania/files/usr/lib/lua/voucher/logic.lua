@@ -56,7 +56,7 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
             uploadlimit = voucher.uploadlimit ~= '0' and voucher.uploadlimit or config.uploadlimit
             downloadlimit = voucher.downloadlimit ~= '0' and voucher.downloadlimit or config.downloadlimit
             currentmacs = table.getn(utils.string_split(voucher.usedmacs, '+'))
-            valid = currentmacs < voucher.amountofmacsallowed and '1' or '0'
+            valid = currentmacs < tonumber(voucher.amountofmacsallowed) and '1' or '0'
             return expiretime, uploadlimit, downloadlimit, valid
         end
     end
