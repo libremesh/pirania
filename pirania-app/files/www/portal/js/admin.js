@@ -4,7 +4,8 @@ let uploadedLogo = null
 
 function xDaysFromNow (days) {
   let date = new Date()
-  return date.setDate(date.getDate() + parseInt(days))
+  let newDate = date.setDate(date.getDate() + parseInt(days))
+  return newDate.toString()
 }
 
 
@@ -122,7 +123,6 @@ function listVouchers () {
     .map(v => {
       const elem = document.createElement('div')
       const date = new Date (parseInt(v.expires))
-      console.log(date)
       let dd = date.getDate()
       let mm = date.getMonth() + 1
       let yyyy = date.getFullYear()
