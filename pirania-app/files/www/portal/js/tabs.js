@@ -85,11 +85,6 @@
 })();
 // End tabs.js
 
-
-
-
-
-
 // Initialise at bottom of HTML 
 var myTabs = tabs({
 			el: '#tabs',

@@ -1,6 +1,15 @@
 let session = null
 let uploadedLogo = null
 
+Date.daysBetween = function( date1, date2 ) {   //Get 1 day in milliseconds   
+  var one_day=1000*60*60*24    // Convert both dates to milliseconds
+  var date1_ms = date1.getTime()   
+  var date2_ms = date2.getTime()    // Calculate the difference in milliseconds  
+  var difference_ms = date2_ms - date1_ms        // Convert back to days and return   
+  return Math.round(difference_ms/one_day) 
+} 
+  
+
 function xDaysFromNow (days) {
   let date = new Date()
   let newDate = date.setDate(date.getDate() + parseInt(days))
@@ -116,24 +125,67 @@ function listVouchers () {
       if(a.name < b.name) { return -1; }
       if(a.name > b.name) { return 1; }
       return 0;
-    })  
+    })
+    .sort((a, b) => {
+      if(parseInt(a.expires) > parseInt(b.expires)) { return -1; }
+      if(parseInt(a.expires) < parseInt(b.expires)) { return 1; }
+      return 0;
+    })
     .map(v => {
-      const elem = document.createElement('div')
       const date = new Date (parseInt(v.expires))
-      let dd = date.getDate()
-      let mm = date.getMonth() + 1
-      let yyyy = date.getFullYear()
-      if (dd < 10) {
-        dd = '0' + dd
-      } 
-      if (mm < 10) {
-        mm = '0' + mm
-      } 
-      elem.innerHTML = `${v.name} : ${v.voucher} - ${dd}/${mm}/${yyyy} <a onclick="removeVoucher('${v.name}')">X</a>`
-      document.getElementById("voucher-list").appendChild(elem)
+      const dateDiff = Date.daysBetween(new Date(), date)
+      let container = document.createElement('div')
+      container.className = 'voucher-item'
+      let vQuantity = document.createElement('div')
+      vQuantity.className = 'voucher-item-mq'
+      vQuantity.innerHTML = v.macs.length > 0 ? v.macs.length : ''
+      container.appendChild(vQuantity)
+      let name = document.createElement('div')
+      name.className = 'voucher-item-name'
+      name.innerHTML = v.name
+      container.appendChild(name)
+      let voucher = document.createElement('div')
+      voucher.className = 'voucher-item-voucher'
+      voucher.innerHTML = v.voucher
+      container.appendChild(voucher)
+      let renew = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+      renew.setAttribute ("viewBox", "0 0 32 32" )
+      renew.setAttribute ("stroke", "currentcolor" )
+      renew.setAttribute ("stroke-linecap", "round" )
+      renew.setAttribute ("stroke-linejoin", "round" )
+      renew.setAttribute ("stroke-width", "2" )
+      renew.setAttribute ("fill", "none" )
+      renew.className = 'voucher-item-renew'
+      renew.onclick = () => removeVoucher('${v.name}')
+      let renewPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
+      renewPath.setAttribute('d', 'M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2')
+      renew.appendChild(renewPath)
+      container.appendChild(renew)
+      let remove = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+      remove.setAttribute ("viewBox", "0 0 32 32" )
+      remove.setAttribute ("stroke", "currentcolor" )
+      remove.setAttribute ("stroke-linecap", "round" )
+      remove.setAttribute ("stroke-linejoin", "round" )
+      remove.setAttribute ("stroke-width", "2" )
+      remove.setAttribute ("fill", "none" )
+      remove.className = 'voucher-item-remove'
+      let removePath = document.createElementNS("http://www.w3.org/2000/svg", "path")
+      removePath.setAttribute('d', 'M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6')
+      remove.appendChild(removePath)
+      container.appendChild(remove)
+      let expires = document.createElement('div')
+      expires.className = 'voucher-item-expires'
+      expires.innerHTML = dateDiff > 0 ? dateDiff +' '+ int[lang].days : 0
+      container.appendChild(expires)
+      let macs = document.createElement('div')
+      macs.innerHTML = v.macs.toString()
+      macs.className = 'voucher-item-macs'
+      container.appendChild(macs)
+      document.getElementById("voucher-list").appendChild(container)
     })
   })
   .catch(err => {
+    console.log(err)
     errorElem.innerHTML = int[lang].error
     show(errorElem)
   })
