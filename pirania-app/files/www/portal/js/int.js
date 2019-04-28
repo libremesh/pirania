@@ -16,6 +16,9 @@ const int = {
     error: 'Erro',
     invalid: 'Código incorreto',
     wrongPassword: 'Senha incorreta',
+    name: 'Nome',
+    days: 'Dias',
+    numberOfVouchers: 'Número de vouchers',
   },
   es: {
     selectVoucher: 'Selecione el dispositivo',
@@ -31,6 +34,9 @@ const int = {
     error: 'Erro',
     invalid: 'Código incorrecto',
     wrongPassword: 'Contraseña incorrecta',
+    name: 'Nombre',
+    days: 'Dias',
+    numberOfVouchers: 'Cantidad de vouchers',
   },
   en: {
     selectVoucher: 'Select a device and enter a voucher',
@@ -46,6 +52,9 @@ const int = {
     error: 'Error',
     invalid: 'Invalid voucher',
     wrongPassword: 'Wrong password',
+    name: 'Nome',
+    days: 'Dias',
+    numberOfVouchers: 'Number of vouchers',
   }
 }
 

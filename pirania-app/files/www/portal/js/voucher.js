@@ -143,13 +143,13 @@ function getValidClients() {
       res.result[1].clients.map(i => {
         const valid = validMacs.filter(valid => i.mac === valid).length > 0
         const node = document.createElement("option")
-        let textnode
-        const isIp = userIp ===  i.ip ? '* ' : ''
+        let textnode = document.createTextNode('')
+        const isIp = userIp ===  i.ip ? '📱 ' : ''
         if (isIp === '* ') node.selected = true
         if (valid) {
-          textnode = document.createTextNode(isIp+i.station+' ✅')
+          textnode.nodeValue = isIp+i.station+' ✅'
         } else {
-          textnode = document.createTextNode(isIp+i.station)
+          textnode.nodeValue = isIp+i.station
         }
         node.value = i.mac
         node.appendChild(textnode)

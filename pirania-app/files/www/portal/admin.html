@@ -35,9 +35,9 @@
         <h3 class="int-createNewVoucher"></h3>
         <br />
         <form onsubmit="event.preventDefault(); createVoucher();">
-          <label>Nome</label>
+          <label class="int-name"></label>
           <input type="text" id="adminInputKey">
-          <label>Dias</label>
+          <label class="int-days"></label>
           <input id="adminInputDays" type="number" value="1" min="1">
           <h3 id="voucherSecret"></h3>
           <input type="submit">
@@ -47,11 +47,11 @@
         <h3 class="int-createManyVouchers"></h3>
         <br />
         <form onsubmit="event.preventDefault(); createManyVouchers();">
-          <label>Nome</label>
+          <label class="int-name"></label>
           <input type="text" id="adminManyInputKey">
-          <label>Dias</label>
+          <label class="int-days"></label>
           <input type="number" value="1" min="1" id="adminManyInputDays">
-          <label>Número de vouchers</label>
+          <label class="int-numberOfVouchers"></label>
           <input id="adminManyInputVouchers" type="number" value="1" min="1" max="100">
           <input type="submit">
         </form>

@@ -1,6 +1,14 @@
 let session = null
 let uploadedLogo = null
 
+
+function xDaysFromNow (days) {
+  let date = new Date()
+  return date.setDate(date.getDate() + parseInt(days))
+}
+
+
+
 function makeid(length) {
   var text = ""
   var possible = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -43,8 +51,7 @@ function createManyVouchers () {
   const key = document.getElementById('adminManyInputKey').value
   const days = document.getElementById('adminManyInputDays').value
   const numberVouchers = document.getElementById('adminManyInputVouchers').value
-  const daysInMs = days * 86400000
-  const epoc = new Date().getTime() + daysInMs
+  const epoc = xDaysFromNow(days)
   const vouchers = []
   for (let index = 0; index < numberVouchers; index++) {
     vouchers.push({
@@ -70,8 +77,7 @@ function createVoucher () {
   const key = document.getElementById('adminInputKey').value
   const secret = makeid(8)
   const days = document.getElementById('adminInputDays').value
-  const daysInMs = days * 86400000
-  const epoc = new Date().getTime() + daysInMs
+  const epoc = xDaysFromNow(days)
   ubusFetch(
     'pirania',
     'add_voucher',
@@ -80,7 +86,7 @@ function createVoucher () {
       key,
       upload: 10,
       download: 10,
-      amountofmacsallowed: 3,
+      amountofmacsallowed: 1,
       secret,
     },
     session
@@ -106,11 +112,27 @@ function listVouchers () {
   ubusFetch('pirania', 'list_vouchers', {}, session)
   .then(res => {
     const vouchers = res.vouchers
-    console.log(vouchers)
     document.getElementById('voucher-list-button').style.display = 'none'
-    vouchers.map(v => {
-      const elem = document.createElement('div');
-      elem.innerHTML = v.name+' : '+v.voucher+` <a onclick="removeVoucher('${v.name}')">X</a>`
+    vouchers
+    .sort((a, b) => {
+      if(a.name < b.name) { return -1; }
+      if(a.name > b.name) { return 1; }
+      return 0;
+    })  
+    .map(v => {
+      const elem = document.createElement('div')
+      const date = new Date (parseInt(v.expires))
+      console.log(date)
+      let dd = date.getDate()
+      let mm = date.getMonth() + 1
+      let yyyy = date.getFullYear()
+      if (dd < 10) {
+        dd = '0' + dd
+      } 
+      if (mm < 10) {
+        mm = '0' + mm
+      } 
+      elem.innerHTML = `${v.name} : ${v.voucher} - ${dd}/${mm}/${yyyy} <a onclick="removeVoucher('${v.name}')">X</a>`
       document.getElementById("voucher-list").appendChild(elem)
     })
   })
@@ -169,7 +191,7 @@ function adminAuth () {
     }
   )
   .then(res => {
-    console.log('RES', res)
+    hide(errorElem)
     session = res.ubus_rpc_session
     document.querySelector('.admin-login').style.display = 'none'
     document.querySelector('.admin-form').style.display = 'block'
