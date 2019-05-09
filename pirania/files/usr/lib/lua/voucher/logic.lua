@@ -13,7 +13,7 @@ local function shell(command)
 end
 
 local function isMac(string)
-    local string = string:match("%w+:%w+:%w+:%w+:%w+:%w")
+    local string = string:match("%w%w:%w%w:%w%w:%w%w:%w%w:%w%w")
     if string then
        return true
     else
