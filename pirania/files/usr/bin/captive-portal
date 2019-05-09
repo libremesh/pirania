@@ -1,7 +1,7 @@
 #!/bin/sh
 # requires ip6tables-mod-nat and ipset
 
-clean () {
+clean_tables () {
 	echo "Cleaning captive-portal rules"
 	for ipvX in ipv4 ipv6 ; do
 		if [ "$ipvX" = "ipv4" ] ; then
@@ -28,20 +28,19 @@ clean () {
 			$iptables -t $table -F pirania
 			$iptables -t $table -X pirania
 		done
-
-		ipset destroy pirania-whitelist-$ipvX
 	done
-
-	ipset destroy pirania-auth-macs
-	ipset -exist create pirania-auth-macs hash:mac timeout 0
 }
 
-set_rules () {
-	echo "Apply captive-portal rules"
-	for mac in $(voucher print_valid_macs) ; do
-		ipset -exist add pirania-auth-macs $mac
+clean_sets () {
+	ipset destroy pirania-auth-macs
+	ipset -exist create pirania-auth-macs hash:mac timeout 0
+	for ipvX in ipv4 ipv6 ; do
+		ipset destroy pirania-whitelist-$ipvX
 	done
+}
 
+set_iptables () {
+	echo "Apply captive-portal rules"
 	for ipvX in ipv4 ipv6 ; do
 		if [ "$ipvX" = "ipv4" ] ; then
 			iptables=iptables
@@ -56,7 +55,6 @@ set_rules () {
 			ipaddr=ip6addr
 			anygw=[$(uci get network.lan.ip6addr | cut -d/ -f1)]
 		fi
-
 
 		### Buildup
 		for table in mangle nat filter; do
@@ -89,20 +87,46 @@ set_rules () {
 	done
 }
 
+set_ipsets () {
+	for mac in $(voucher print_valid_macs) ; do
+		ipset -exist add pirania-auth-macs $mac
+	done
+	for ipvX in ipv4 ipv6 ; do
+		if [ "$ipvX" = "ipv4" ] ; then
+			family=inet
+		else
+			family=inet6
+		fi
+		ipset -exist create pirania-whitelist-$ipvX hash:net family $family
+		for item in $(uci get pirania.base_config.whitelist_$ipvX); do
+			ipset -exist add pirania-whitelist-$ipvX $item
+		done
+	done
+}
+
 # check if captive-portal is enabled in /etc/config/pirania
 enabled=$(uci get pirania.base_config.enabled)
 
 if  [ "$1" = "start" ]; then
 	echo "Running captive-portal"
-	clean
-	set_rules
+	clean_tables
+	clean_sets
+	set_ipsets
+	set_iptables
+	exit
+elif [ "$1" = "update" ] ; then
+	clean_sets
+	set_ipsets
 	exit
 elif [ "$1" = "clean" ] || [ "$1" = "stop" ] ; then
-	clean
+	clean_tables
+	clean_sets
 	exit
 elif [ "$enabled" = "1" ]; then
-	clean
-	set_rules
+	clean_tables
+	clean_sets
+	set_ipsets
+	set_iptables
 	exit
 else
 	echo "Pirania captive-portal is disabled. Try running captive-portal start"

@@ -12,6 +12,16 @@ local function shell(command)
     return result
 end
 
+local function isMac(string)
+    local string = string:match("%w+:%w+:%w+:%w+:%w+:%w")
+    if string then
+       return true
+    else
+       return false
+    end
+end
+
+
 local function dateNow()
     local output = shell('date +%s000')
     local parsed = string.gsub(output, "%s+", "")
@@ -65,7 +75,10 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
 end
 
 function logic.valid_voucher(db, row)
-    return tonumber(dba.describe_values(db, row).expiretime or 0) > dateNow()
+    local expireDate = tonumber(dba.describe_values(db, row).expiretime) or 0
+    if (expireDate ~= nil) then
+        return expireDate > dateNow()
+    end
 end
 
 function logic.auth_voucher(db, mac, voucherid)
@@ -99,7 +112,7 @@ function logic.valid_macs(db)
             local voucher = dba.describe_values(db, rawvoucher)
             currentmacs = utils.string_split(voucher.usedmacs, '+')
             for _, mac in ipairs( currentmacs ) do
-                if (_ <=  tonumber(voucher.amountofmacsallowed)) then
+                if (_ <=  tonumber(voucher.amountofmacsallowed) and isMac(mac)) then
                     table.insert(macs, mac)
                 end
             end
