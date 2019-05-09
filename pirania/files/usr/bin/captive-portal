@@ -32,10 +32,9 @@ clean_tables () {
 }
 
 clean_sets () {
-	ipset destroy pirania-auth-macs
-	ipset -exist create pirania-auth-macs hash:mac timeout 0
+	ipset flush pirania-auth-macs
 	for ipvX in ipv4 ipv6 ; do
-		ipset destroy pirania-whitelist-$ipvX
+		ipset flush pirania-whitelist-$ipvX
 	done
 }
 
@@ -66,12 +65,6 @@ set_iptables () {
 
 		for interface in $(uci get pirania.base_config.catch_interfaces); do
 			$iptables -t mangle -A PREROUTING -i $interface -j pirania
-		done
-
-		ipset -exist create pirania-whitelist-$ipvX hash:net family $family
-
-		for item in $(uci get pirania.base_config.whitelist_$ipvX); do
-			ipset -exist add pirania-whitelist-$ipvX $item
 		done
 
 		$iptables -t nat -A pirania -p udp  -m set ! --match-set pirania-whitelist-$ipvX src -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
