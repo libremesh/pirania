@@ -270,6 +270,20 @@ select option {
   bottom: -5px;
 }
 
+#voucher-list-button {
+  position: fixed;
+  top: 5%;
+  right: 5%;
+  border-radius: 25px;
+  z-index: 999;
+}
+
+#voucher-list-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
 #error {
   margin: 0 auto;
   text-align: center;
@@ -286,6 +300,7 @@ select option {
   position: absolute !important;
   top: -9999px !important;
   left: -9999px !important;
+  z-index: -1;
 }
 
 @media only screen and (max-width: 480px) {

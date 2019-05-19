@@ -1,3 +1,4 @@
+{/* <div class="lds-ring"><div></div><div></div><div></div><div></div></div> */}
 let loader = document.createElement('div')
 loader.className = 'lds-ring'
 loader.appendChild(document.createElement('div'))
@@ -10,7 +11,6 @@ let result = document.getElementById('result')
 const show = elem => elem.classList.remove('hidden')
 const hide = elem => elem.className += ' hidden'
 
-{/* <div class="lds-ring"><div></div><div></div><div></div><div></div></div> */}
 let content = {
   backgroundColor: 'white',
   title: '',

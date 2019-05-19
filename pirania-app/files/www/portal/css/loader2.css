@@ -1,6 +1,6 @@
 .lds-ring {
   display: inline-block;
-  position: relative;
+  /* position: relative; */
   top: -6.5vh;
   width: 25px;
   height: 25px;
