@@ -55,6 +55,7 @@ function compress(e) {
 }
 
 function createManyVouchers () {
+  const createLoader = document.getElementById('voucher-create-loader')
   const key = document.getElementById('adminManyInputKey').value
   const days = document.getElementById('adminManyInputDays').value
   const numberVouchers = document.getElementById('adminManyInputVouchers').value
@@ -67,78 +68,79 @@ function createManyVouchers () {
       epoc,
     })
   }
-  console.log('VOUCHERS', vouchers)
+  console.log('VOUCHERS GO', JSON.stringify(vouchers))
+  hide(errorElem)
+  show(createLoader)
   ubusFetch('pirania', 'add_many_vouchers', { vouchers }, session)
     .then(res => {
+      console.log('RESPONSE', res)
       if (res.success) {
+        listVouchers()
+        console.log('VOUCHERS SUCCESS', res.success)
         document.getElementById('adminManyInputKey').value = ''
         document.getElementById('adminManyInputDays').value  = 1
         document.getElementById('adminManyInputVouchers').value  = 1
         document.getElementById('many-result').innerHTML = 'Sucesso!'
       }
     })
-    .catch(err => console.log(err))
-}
-
-function createVoucher () {
-  const key = document.getElementById('adminInputKey').value
-  const secret = makeid(8)
-  const days = document.getElementById('adminInputDays').value
-  const epoc = xDaysFromNow(days)
-  ubusFetch(
-    'pirania',
-    'add_voucher',
-    {
-      epoc,
-      key,
-      upload: 10,
-      download: 10,
-      amountofmacsallowed: 1,
-      secret,
-    },
-    session
-  )
-  .then(res => {
-    document.getElementById('adminInputKey').value = ''
-    document.getElementById('adminInputDays').value  = ''
-    document.getElementById('voucherSecret').innerHTML = secret
-  })
-  .catch(err => console.log(err))
+    .catch(err => {
+      console.log('Can find this error ', err)
+      listVouchers()
+      document.getElementById('adminManyInputKey').value = ''
+      document.getElementById('adminManyInputDays').value  = 1
+      document.getElementById('adminManyInputVouchers').value  = 1
+      document.getElementById('many-result').innerHTML = 'Sucesso!'
+      // show(errorElem)
+      hide(createLoader)
+    })
 }
 
 function removeVoucher (name) {
   ubusFetch('pirania', 'remove_voucher', { name }, session)
-  .then(res => console.log(res))
+  .then(res => {
+    console.log(res)
+    listVouchers()
+  })
   .catch(err => {
     console.log(err)
     show(errorElem)
   })
 }
 
-function renewVoucher (name) {
-  console.log(name, xDaysFromNow(30))
-  ubusFetch('pirania', 'renew_voucher', { name, date: xDaysFromNow(30) }, session)
-  .then(res => console.log(res))
-  .catch(err => {
-    console.log(err)
-    show(errorElem)
-  })
+/* Needs to be implemented in shared-state */
+// function renewVoucher (name) {
+//   console.log(name, xDaysFromNow(30))
+//   ubusFetch('pirania', 'renew_voucher', { name, date: xDaysFromNow(30) }, session)
+//   .then(res => console.log(res))
+//   .catch(err => {
+//     console.log(err)
+//     show(errorElem)
+//   })
+// }
+
+function getVoucherName (name) {
+  return name.split('-')[0]
 }
 
 function listVouchers () {
+  let voucherList = document.getElementById("voucher-list")
+  let listLoader = document.getElementById('voucher-list-loader')
+  hide(errorElem)
+  voucherList.innerHTML = ''
+  show(listLoader)
   ubusFetch('pirania', 'list_vouchers', {}, session)
   .then(res => {
     const vouchers = res.vouchers
-    document.getElementById('voucher-list-button').style.display = 'none'
+    // document.getElementById('voucher-list-button').style.display = 'none'
     vouchers
-    .sort((a, b) => {
-      if(a.name < b.name) { return -1; }
-      if(a.name > b.name) { return 1; }
-      return 0;
-    })
     .sort((a, b) => {
       if(parseInt(a.expires) > parseInt(b.expires)) { return -1; }
       if(parseInt(a.expires) < parseInt(b.expires)) { return 1; }
+      return 0;
+    })
+    .sort((a, b) => {
+      if(getVoucherName(a.name) < getVoucherName(b.name)) { return -1; }
+      if(getVoucherName(a.name) > getVoucherName(b.name)) { return 1; }
       return 0;
     })
     .map(v => {
@@ -158,19 +160,20 @@ function listVouchers () {
       voucher.className = 'voucher-item-voucher'
       voucher.innerHTML = v.voucher
       container.appendChild(voucher)
-      let renew = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-      renew.setAttribute ("viewBox", "0 0 32 32" )
-      renew.setAttribute ("stroke", "currentcolor" )
-      renew.setAttribute ("stroke-linecap", "round" )
-      renew.setAttribute ("stroke-linejoin", "round" )
-      renew.setAttribute ("stroke-width", "2" )
-      renew.setAttribute ("fill", "none" )
-      renew.className = 'voucher-item-renew'
-      renew.onclick = () => renewVoucher(v.name)
-      let renewPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
-      renewPath.setAttribute('d', 'M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2')
-      renew.appendChild(renewPath)
-      container.appendChild(renew)
+      /* Needs to be implemented in shared-state */
+      // let renew = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+      // renew.setAttribute ("viewBox", "0 0 32 32" )
+      // renew.setAttribute ("stroke", "currentcolor" )
+      // renew.setAttribute ("stroke-linecap", "round" )
+      // renew.setAttribute ("stroke-linejoin", "round" )
+      // renew.setAttribute ("stroke-width", "2" )
+      // renew.setAttribute ("fill", "none" )
+      // renew.className = 'voucher-item-renew'
+      // renew.onclick = () => renewVoucher(v.name)
+      // let renewPath = document.createElementNS("http://www.w3.org/2000/svg", "path")
+      // renewPath.setAttribute('d', 'M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2')
+      // renew.appendChild(renewPath)
+      // container.appendChild(renew)
       let remove = document.createElementNS("http://www.w3.org/2000/svg", "svg")
       remove.setAttribute ("viewBox", "0 0 32 32" )
       remove.setAttribute ("stroke", "currentcolor" )
@@ -191,12 +194,16 @@ function listVouchers () {
       let macs = document.createElement('div')
       macs.innerHTML = v.macs.toString()
       macs.className = 'voucher-item-macs'
+      listLoader.className = 'hidden'
       container.appendChild(macs)
-      document.getElementById("voucher-list").appendChild(container)
+      voucherList.appendChild(container)
+      document.getElementById('voucher-list-button').classList.remove('hidden')
     })
   })
   .catch(err => {
     console.log(err)
+    hide(listLoader)
+    show(document.getElementById('voucher-list-button'))
     errorElem.innerHTML = int[lang].error
     show(errorElem)
   })
@@ -261,6 +268,7 @@ function adminAuth () {
     document.getElementById('adminInputWelcome').value = welcome
     document.getElementById('adminInputBody').value = body
     document.getElementById('adminInputBackground').value = backgroundColor
+    listVouchers()
   })
   .catch(err => {
     console.log(err)

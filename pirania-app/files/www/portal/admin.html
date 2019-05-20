@@ -42,15 +42,6 @@
           </svg>
         </a>
         <a href="#" class="tab-link">
-          <nav class="int-createNewVoucher hidden"></nav>
-          <svg id="i-file" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none"
-            stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-            <path d="M6 2 L6 30 26 30 26 10 18 2 Z M18 2 L18 10 26 10" />
-          </svg>
-
-
-        </a>
-        <a href="#" class="tab-link">
           <nav class="int-createManyVouchers hidden"></nav>
           <svg id="i-book" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none"
             stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -69,21 +60,21 @@
         </a>
       </div>
       <div class="tab-content is-active">
-        <div id="voucher-list">
-          <button onclick="listVouchers()" id="voucher-list-button" class="int-listVouchers"></button>
+        <button onclick="listVouchers()" id="voucher-list-button" class="hidden">
+          <svg id="i-reload" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none"
+            stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M29 16 C29 22 24 29 16 29 8 29 3 22 3 16 3 10 8 3 16 3 21 3 25 6 27 9 M20 10 L27 9 28 2" />
+          </svg>
+        </button>
+        <div id="voucher-list-loader">
+          <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
-      </div>
-      <div class="tab-content">
-        <div class="admin-create">
-          <form onsubmit="event.preventDefault(); createVoucher();">
-            <label class="int-name"></label>
-            <input type="text" id="adminInputKey">
-            <label class="int-days"></label>
-            <input id="adminInputDays" type="number" value="1" min="1">
-            <h3 id="voucherSecret"></h3>
-            <input type="submit">
-          </form>
-        </div>
+        <div id="voucher-list"></div>
       </div>
       <div class="tab-content">
         <div class="admin-create-many">
@@ -95,6 +86,14 @@
             <label class="int-numberOfVouchers"></label>
             <input id="adminManyInputVouchers" type="number" value="1" min="1" max="100">
             <input type="submit">
+            <div id="voucher-create-loader" class="hidden">
+              <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
           </form>
           <h3 id="many-result"></h3>
         </div>
