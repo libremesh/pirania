@@ -1,5 +1,5 @@
 config base_config 'base_config'
-    option enabled '1'
+    option enabled '0'
     option portal_url 'http://thisnode.info/portal'
     option db_path '/etc/pirania/db.csv'
     option hooks_path '/etc/pirania/hooks/'
