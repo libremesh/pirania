@@ -1,4 +1,6 @@
-{/* <div class="lds-ring"><div></div><div></div><div></div><div></div></div> */}
+{
+  /* <div class="lds-ring"><div></div><div></div><div></div><div></div></div> */
+}
 let loader = document.createElement('div')
 loader.className = 'lds-ring'
 loader.appendChild(document.createElement('div'))
@@ -9,14 +11,14 @@ loader.appendChild(document.createElement('div'))
 let errorElem = document.getElementById('error')
 let result = document.getElementById('result')
 const show = elem => elem.classList.remove('hidden')
-const hide = elem => elem.className += ' hidden'
+const hide = elem => (elem.className += ' hidden')
 
 let content = {
   backgroundColor: 'white',
   title: '',
   welcome: '',
   body: '',
-  logo: '',
+  logo: ''
 }
 
 function getContent () {
@@ -33,9 +35,9 @@ function getContent () {
       if (contentTitle) contentTitle.innerHTML = title
       if (contentWelcome) contentWelcome.innerHTML = welcome
       if (contentBody) contentBody.innerHTML = body
-      document.querySelector('.sk-folding-cube').style.display = 'none'
-      document.querySelector('.main').style.display = 'block'
-      document.querySelector('.main').style.opacity = '1'
+      // document.querySelector('.sk-folding-cube').style.display = 'none'
+      // document.querySelector('.main').style.display = 'block'
+      // document.querySelector('.main').style.opacity = '1'
     })
     .catch(err => {
       document.getElementById('error').innerHTML = int[lang].error
