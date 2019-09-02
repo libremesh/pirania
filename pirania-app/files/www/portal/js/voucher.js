@@ -27,13 +27,19 @@ const validGetClients = {
   ]
 }
 
+function prepareResult (res) {
+  if (res.error) {
+    console.log(res.error)
+    errorElem.innerHTML = res.error
+    show(errorElem)
+    ubusError = true
+  } else if (res && res.result[1]) return res.result[1]
+  else return false
+}
+
 function authVoucher () {
   let mac
-  if (document.getElementById('stations').value) {
-    mac = document.getElementById('stations').value
-  } else {
-    mac = userMac
-  }
+  mac = document.getElementById('stations').value || userMac
   let voucherElem = document.getElementById('voucherInput')
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
@@ -60,10 +66,10 @@ function authVoucher () {
     }
   })
     .then(parseJSON)
+    .then(prepareResult)
     .then(res => {
       hide(loader)
-      // debugger
-      if (res && res.result[1] && res.result[1].success) {
+      if (res && res.success) {
         result.innerHTML = int[lang].success
         show(result)
         hide(errorElem)
@@ -72,20 +78,14 @@ function authVoucher () {
         if (urlTo) {
           window.location.href = `http://${urlTo}`
         }
-      } else if (res && res.result[1] && !res.result[1].success) {
+      } else if (res && !res.success) {
         errorElem.innerHTML = int[lang].invalid
         show(errorElem)
-      } else if (res.error) {
-        console.log(res.error)
-        errorElem.innerHTML = res.error
-        show(errorElem)
-
-        ubusError = true
       }
       voucherElem.value = ''
     })
     .catch(err => {
-      console.log('Erro no Ubus', err)
+      console.log('UBUS error:', err)
       errorElem.innerHTML = err
       show(errorElem)
       ubusError = true
@@ -115,17 +115,14 @@ function getIp () {
             console.log(i)
             return JSON.parse(i)
           })
+          .then(prepareResult)
           .then(res => {
-            console.log('Ubus res: ', res)
-            if (res && res.result[1]) {
-              userIp = res.result[1]
-            } else if (res.error) {
-              userIp = res.error
-              ubusError = true
+            if (res) {
+              userIp = res
             }
           })
           .catch(err => {
-            console.log('Erro no Ubus', err)
+            console.log('UBUS error:', err)
             ubusError = true
           })
       }
@@ -151,10 +148,11 @@ function getValidClients () {
     }
   })
     .then(parseJSON)
+    .then(prepareResult)
     .then(res => {
-      if (res && res.result[1] && !ubusError) {
+      if (res && !ubusError) {
         document.getElementById('stations').innerHTML = ''
-        res.result[1].clients.map(i => {
+        res.clients.map(i => {
           const valid = validMacs.filter(valid => i.mac === valid).length > 0
           const node = document.createElement('option')
           let textnode = document.createTextNode('')
@@ -166,20 +164,13 @@ function getValidClients () {
             node.selected = true
           }
           const isIp = userIp === i.ip ? '📱 ' : ''
-          if (valid) {
-            textnode.nodeValue = isIp + i.station + ' ✅'
-          } else {
-            textnode.nodeValue = isIp + i.station
-          }
+          textnode.nodeValue = valid
+            ? isIp + i.station + ' ✅'
+            : isIp + i.station
           node.value = i.mac
           node.appendChild(textnode)
           document.getElementById('stations').appendChild(node)
         })
-      } else if (res.error) {
-        console.log(res.error)
-        errorElem.innerHTML = int[lang].error
-        show(errorElem)
-        ubusError = true
       }
     })
     .catch(err => {

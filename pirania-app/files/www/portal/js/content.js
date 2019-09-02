@@ -1,6 +1,3 @@
-{
-  /* <div class="lds-ring"><div></div><div></div><div></div><div></div></div> */
-}
 let loader = document.createElement('div')
 loader.className = 'lds-ring'
 loader.appendChild(document.createElement('div'))
@@ -35,9 +32,6 @@ function getContent () {
       if (contentTitle) contentTitle.innerHTML = title
       if (contentWelcome) contentWelcome.innerHTML = welcome
       if (contentBody) contentBody.innerHTML = body
-      // document.querySelector('.sk-folding-cube').style.display = 'none'
-      // document.querySelector('.main').style.display = 'block'
-      // document.querySelector('.main').style.opacity = '1'
     })
     .catch(err => {
       document.getElementById('error').innerHTML = int[lang].error
