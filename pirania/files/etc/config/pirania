@@ -5,6 +5,7 @@ config base_config 'base_config'
     option hooks_path '/etc/pirania/hooks/'
     option uploadlimit '10000000'
     option downloadlimit '50000'
+    option append_ipt_rules '1'  # if set to 1, iptables rules will be Appended instead of Inserted
     list whitelist_ipv4 '10.0.0.0/8'
     list whitelist_ipv6 '2a00::/8'
     list whitelist_ipv4 '172.16.0.0/12'

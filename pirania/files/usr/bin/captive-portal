@@ -38,6 +38,14 @@ clean_sets () {
 
 set_iptables () {
 	echo "Apply captive-portal rules"
+
+	append_ipt_rules=$(uci get pirania.base_config.append_ipt_rules 2> /dev/null)
+	if [ "$append_ipt_rules" = "1" ] ; then
+	    AorI="A"
+	else
+	    AorI="I"
+	fi
+
 	for ipvX in ipv4 ipv6 ; do
 		if [ "$ipvX" = "ipv4" ] ; then
 			iptables=iptables
@@ -56,11 +64,11 @@ set_iptables () {
 			$iptables -t $table -N pirania
 		done
 
-		$iptables -t nat -A PREROUTING -j pirania
-		$iptables -t filter -A FORWARD -j pirania
+		$iptables -t nat -$AorI PREROUTING -j pirania
+		$iptables -t filter -$AorI FORWARD -j pirania
 
 		for interface in $(uci get pirania.base_config.catch_interfaces); do
-			$iptables -t mangle -A PREROUTING -i $interface -j pirania
+			$iptables -t mangle -$AorI PREROUTING -i $interface -j pirania
 		done
 
 		$iptables -t nat -A pirania -p udp  -m set ! --match-set pirania-whitelist-$ipvX src -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
