@@ -7,12 +7,10 @@ clean_tables () {
 		if [ "$ipvX" = "ipv4" ] ; then
 			iptables=iptables
 			family=inet
-			icmp=icmp
 			ipaddr=ipaddr
 		else
 			iptables=ip6tables
 			family=inet6
-			icmp=icmpv6
 			ipaddr=ip6addr
 		fi
 
@@ -44,13 +42,11 @@ set_iptables () {
 		if [ "$ipvX" = "ipv4" ] ; then
 			iptables=iptables
 			family=inet
-			icmp=icmp
 			ipaddr=ipaddr
 			anygw=$(uci get network.lm_net_br_lan_anygw_if.ipaddr)
 		else
 			iptables=ip6tables
 			family=inet6
-			icmp=icmpv6
 			ipaddr=ip6addr
 			anygw=[$(uci get network.lan.ip6addr | cut -d/ -f1)]
 		fi
@@ -69,10 +65,9 @@ set_iptables () {
 
 		$iptables -t nat -A pirania -p udp  -m set ! --match-set pirania-whitelist-$ipvX src -m set ! --match-set pirania-auth-macs src --dport 53 -j DNAT --to-destination $anygw:59053
 
-		$iptables -t mangle -A pirania -p $icmp -j RETURN
 		$iptables -t mangle -A pirania -m set --match-set pirania-auth-macs src -j RETURN
 		$iptables -t mangle -A pirania -m set --match-set pirania-whitelist-$ipvX dst -j RETURN
-		$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
+		$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not auth nor whitelisted will be marked for REJECT
 		$iptables -t mangle -A pirania -p tcp -m tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
 
 		$iptables -t nat    -A pirania -p tcp -m tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 59080
