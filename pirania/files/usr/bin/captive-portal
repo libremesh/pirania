@@ -75,7 +75,7 @@ set_iptables () {
 		$iptables -t mangle -A pirania -j MARK --set-mark 0x66/0xff  # everything not icmp nor auth nor whitelisted will be marked for REJECT
 		$iptables -t mangle -A pirania -p tcp -m tcp --dport 80 -j MARK --set-mark 0x80/0xff  # unless is dport 80, re-set mark for REDIRECT
 
-		$iptables -t nat    -A pirania -p tcp -m tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 2055
+		$iptables -t nat    -A pirania -p tcp -m tcp -m mark --mark 0x80/0xff -j REDIRECT --to-ports 59080
 		$iptables -t filter -A pirania -m mark --mark 0x66/0xff -j REJECT
 	done
 }

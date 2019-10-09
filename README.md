@@ -40,7 +40,7 @@ It uses iptables rules to filter inbound connections outside the mesh network.
 files/
     /etc/config/pirania is the UCI config
     /etc/pirania/db.csv (default path) contains the database of vouchers
-    /etc/init.d/pirania-uhttpd starts a uhttpd on port 2055 that replies any request with a redirect towards a preset URL
+    /etc/init.d/pirania-uhttpd starts a uhttpd on port 59080 that replies any request with a redirect towards a preset URL
 
     /usr/lib/lua/voucher/ contains lua libraries used by /usr/bin/voucher
     /usr/bin/voucher is a CLI to manage the db (has functions add_voucher, add_many_vouchers, auth_voucher, get_valid_macs, list_vouchers, remove_voucher and url)
