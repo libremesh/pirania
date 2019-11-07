@@ -135,7 +135,6 @@ function getValidClients () {
           const valid = validMacs.filter(valid => i.mac === valid).length > 0
           const node = document.createElement('option')
           let textnode = document.createTextNode('')
-          console.log(i.ip, userIp)
           if (userIp === i.ip) {
             userMac = i.mac
             const userMacElement = document.getElementById('user-mac')
