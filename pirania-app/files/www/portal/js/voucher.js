@@ -93,41 +93,20 @@ function authVoucher () {
 }
 
 function getIp () {
-  window.RTCPeerConnection =
-    window.RTCPeerConnection ||
-    window.mozRTCPeerConnection ||
-    window.webkitRTCPeerConnection // compatibility for Firefox and chrome
-  var pc = new RTCPeerConnection({ iceServers: [] })
-
-  var noop = function () {}
-  pc.createDataChannel('') // create a bogus data channel
-  pc.createOffer(pc.setLocalDescription.bind(pc), noop) // create offer and set local description
-  pc.onicecandidate = function (ice) {
-    if (ice && ice.candidate && ice.candidate.candidate) {
-      var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(
-        ice.candidate.candidate
-      )[1]
-      pc.onicecandidate = noop
-      if (myIP) userIp = myIP
-      else {
-        fetch('http://thisnode.info/cgi-bin/client_ip')
-          .then(i => {
-            console.log(i)
-            return JSON.parse(i)
-          })
-          .then(prepareResult)
-          .then(res => {
-            if (res) {
-              userIp = res
-            }
-          })
-          .catch(err => {
-            console.log('UBUS error:', err)
-            ubusError = true
-          })
-      }
+  return fetch('http://thisnode.info/cgi-bin/client_ip', {
+    headers: {
+      'Access-Control-Allow-Origin': 'http://thisnode.info'
     }
-  }
+  })
+    .then(async i => {
+      const res = await i.json()
+      userIp = res.ip
+      userMac = res.mac
+    })
+    .catch(err => {
+      console.log('Error fetching mac:', err)
+      ubusError = true
+    })
 }
 
 function getValidClients () {
@@ -140,7 +119,7 @@ function getValidClients () {
       myDiv.appendChild(select)
     }
   }
-  fetch(url, {
+  return fetch(url, {
     method: 'POST',
     body: JSON.stringify(validGetClients),
     headers: {
@@ -156,6 +135,7 @@ function getValidClients () {
           const valid = validMacs.filter(valid => i.mac === valid).length > 0
           const node = document.createElement('option')
           let textnode = document.createTextNode('')
+          console.log(i.ip, userIp)
           if (userIp === i.ip) {
             userMac = i.mac
             const userMacElement = document.getElementById('user-mac')
@@ -169,7 +149,7 @@ function getValidClients () {
             : isIp + i.station
           node.value = i.mac
           node.appendChild(textnode)
-          document.getElementById('stations').appendChild(node)
+          return document.getElementById('stations').appendChild(node)
         })
       }
     })
@@ -209,9 +189,9 @@ function getValidMacs () {
     })
 }
 
-function init () {
-  getIp()
-  getValidClients()
+async function init () {
+  await getIp()
+  await getValidClients()
   getValidMacs()
 }
 
