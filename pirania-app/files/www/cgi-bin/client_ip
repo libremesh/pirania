@@ -6,10 +6,17 @@ print ("Content-type: application/json\n")
 local ip = os.getenv('REMOTE_ADDR')
 
 local function get_mac_from_ip(ip)
+    local output
     local command = "cat /proc/net/arp | grep "..ip.." | awk -F ' ' '{print $4}' | head -n 1"
     fd = io.popen(command, 'r')
-    local output = fd:read('*all')
+    output = fd:read('*l')
     fd:close()
+    if output == nil then
+        local ipv6mac = "ip neighbor | grep "..ip.." | awk -F ' ' '{print $5}' | head -n 1"
+        fd = io.popen(ipv6mac, 'r')
+        output = fd:read('*l')
+        fd:close()
+    end
     return output
 end
 
