@@ -167,7 +167,7 @@ select option {
 }
 
 .voucher {
-  padding-top: 100px;
+  padding-top: 30px;
 }
 
 .voucher form {
@@ -283,11 +283,6 @@ select option {
   left: 50%;
 }
 
-#user-mac {
-  border: 1px solid black;
-  padding: 10px 1px;
-}
-
 #error {
   margin: 0 auto;
   text-align: center;
@@ -305,6 +300,26 @@ select option {
   top: -9999px !important;
   left: -9999px !important;
   z-index: -1;
+}
+
+#other-devices {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  margin: 0 auto;
+  border-radius: 25px;
+  height: 45px;
+  width: 45px;
+  display: flex;
+  flex-flow: row nowrap;
+  text-align: center;
+  justify-content: center;
+}
+
+#other-devices span {
+  font-size: 20px;
+  position: relative;
+  right: 10px;
 }
 
 @media only screen and (max-width: 480px) {

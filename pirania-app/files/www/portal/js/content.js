@@ -28,7 +28,10 @@ function getContent () {
       const contentTitle = document.getElementById('content-title')
       const contentWelcome = document.getElementById('content-welcome')
       const contentBody = document.getElementById('content-body')
-      if (contentLogo) contentLogo.src = logo
+      if (contentLogo) {
+        show(contentLogo)
+        contentLogo.src = logo
+      }
       if (contentTitle) contentTitle.innerHTML = title
       if (contentWelcome) contentWelcome.innerHTML = welcome
       if (contentBody) contentBody.innerHTML = body

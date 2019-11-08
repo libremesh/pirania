@@ -1,9 +1,9 @@
-const  userLang = navigator.language || navigator.userLanguage
+const userLang = navigator.language || navigator.userLanguage
 const lang = userLang.split('-')[0] || userLang || 'en'
 
 const int = {
   pt: {
-    selectVoucher: 'Selecione o aparelho e entre o voucher',
+    selectVoucher: 'Entre o voucher',
     createNewVoucher: 'Criar novo voucher',
     createManyVouchers: 'Criar muitos vouchers',
     changeContent: 'Mudar o conteúdo',
@@ -18,10 +18,10 @@ const int = {
     wrongPassword: 'Senha incorreta',
     name: 'Nome',
     days: 'Dias',
-    numberOfVouchers: 'Número de vouchers',
+    numberOfVouchers: 'Número de vouchers'
   },
   es: {
-    selectVoucher: 'Selecione el dispositivo',
+    selectVoucher: 'Entre el voucher',
     createNewVoucher: 'Crear nuevo voucher',
     createManyVouchers: 'Crear muchos vouchers',
     changeContent: 'Cambiar el contenido',
@@ -36,10 +36,10 @@ const int = {
     wrongPassword: 'Contraseña incorrecta',
     name: 'Nombre',
     days: 'Dias',
-    numberOfVouchers: 'Cantidad de vouchers',
+    numberOfVouchers: 'Cantidad de vouchers'
   },
   en: {
-    selectVoucher: 'Select a device and enter a voucher',
+    selectVoucher: 'Enter a voucher',
     createNewVoucher: 'Create new voucher',
     createManyVouchers: 'Create many vouchers',
     changeContent: 'Change content',
@@ -54,10 +54,12 @@ const int = {
     wrongPassword: 'Wrong password',
     name: 'Nome',
     days: 'Dias',
-    numberOfVouchers: 'Number of vouchers',
+    numberOfVouchers: 'Number of vouchers'
   }
 }
 
 Object.keys(int[lang]).map(text => {
-  Array.from(document.getElementsByClassName(`int-${text}`)).map(element => element.innerHTML = int[lang][text])
+  Array.from(document.getElementsByClassName(`int-${text}`)).map(
+    element => (element.innerHTML = int[lang][text])
+  )
 })

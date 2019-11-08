@@ -137,9 +137,6 @@ function getValidClients () {
           let textnode = document.createTextNode('')
           if (userIp === i.ip) {
             userMac = i.mac
-            const userMacElement = document.getElementById('user-mac')
-            const infoText = '📱 ' + i.station + ' ' + '<b>' + userMac + '</b>'
-            userMacElement.innerHTML = valid ? infoText + ' ✅' : infoText
             node.selected = true
           }
           const isIp = userIp === i.ip ? '📱 ' : ''
@@ -187,6 +184,22 @@ function getValidMacs () {
       ubusError = true
     })
 }
+
+var showingList = false
+var stationList = document.getElementById('station-list')
+var otherDevices = document.getElementById('other-devices')
+
+otherDevices.addEventListener('click', function (e) {
+  e.preventDefault()
+  showingList = !showingList
+  if (showingList) {
+    show(stationList)
+    otherDevices.style.backgroundColor = '#A593E0'
+  } else {
+    hide(stationList)
+    otherDevices.style.backgroundColor = ''
+  }
+})
 
 async function init () {
   await getIp()
