@@ -102,6 +102,13 @@ function getIp () {
       const res = await i.json()
       userIp = res.ip
       userMac = res.mac
+      userIsValid = res.valid
+      if (res.valid) {
+        hide(document.getElementById("voucherInput"))
+        hide(document.getElementById("voucherInput-submit"))
+        hide(document.getElementsByClassName('int-selectVoucher')[0])
+        show(document.getElementById("user-valid"))
+      }
     })
     .catch(err => {
       console.log('Error fetching mac:', err)
@@ -194,6 +201,9 @@ otherDevices.addEventListener('click', function (e) {
   showingList = !showingList
   if (showingList) {
     show(stationList)
+    show(document.getElementById("voucherInput"))
+    show(document.getElementById("voucherInput-submit"))
+    show(document.getElementsByClassName('int-selectVoucher')[0])
     otherDevices.style.backgroundColor = '#A593E0'
   } else {
     hide(stationList)

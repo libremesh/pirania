@@ -58,6 +58,10 @@ textarea {
   border-radius: 15px;
 }
 
+#user-valid {
+  font-size: 45px;
+}
+
 select {
   display: block;
   font-family: sans-serif;
