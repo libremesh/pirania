@@ -26,7 +26,7 @@ local function getIpv4AndMac()
     local address = os.getenv('REMOTE_ADDR')
     local isIpv4 = checkIfIpv4(address)
     if (isIpv4) then
-        local ipv4macCommand = "cat /proc/net/arp | grep "..ip.." | awk -F ' ' '{print $4}' | head -n 1"
+        local ipv4macCommand = "cat /proc/net/arp | grep "..address.." | awk -F ' ' '{print $4}' | head -n 1"
         fd = io.popen(ipv4macCommand, 'r')
         ipv4mac = fd:read('*l')
         fd:close()
