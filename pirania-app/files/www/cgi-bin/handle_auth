@@ -1,19 +1,12 @@
 #!/usr/bin/lua
 
-local util = require('luci.util')
-local urldecode = util.urldecode
+local http = require('luci.http')
 
-function handle_request(env)
-    uhttpd.send("Status: 200 OK\r\n")
-    uhttpd.send("Content-Type: text/plain\r\n\r\n")
-    print(env)
-    local QUERY_STRING = env.QUERY_STRING
-    print(QUERY_STRING)
-    -- local command = urldecode(string.sub(env.REQUEST_URI, 6))
-    
-    -- local proc = assert(io.popen(command))
-    -- for line in proc:lines() do
-    --     uhttpd.send(line.."\n")
-    -- end
-    -- proc:close()
-end
+local query_string = os.getenv("QUERY_STRING")
+
+print('Content-Type: text/plain\r\n\r\n')
+print('Hello')
+params = http.urldecode_params(query_string)
+
+print(params['mac'])
+if params == mac
