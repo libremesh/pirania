@@ -27,6 +27,10 @@ const validGetClients = {
   ]
 }
 
+var showingList = false
+var stationList = document.getElementById('station-list')
+var otherDevices = document.getElementById('other-devices')
+
 function prepareResult (res) {
   if (res.error) {
     console.log(res.error)
@@ -38,8 +42,13 @@ function prepareResult (res) {
 }
 
 function authVoucher () {
+  if (!userMac) return
   let mac
-  mac = document.getElementById('stations').value || userMac
+  if (showingList) {
+    mac = document.getElementById('stations').value || userMac
+  } else {
+    mac = userMac
+  }
   let voucherElem = document.getElementById('voucherInput')
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
@@ -192,17 +201,15 @@ function getValidMacs () {
     })
 }
 
-var showingList = false
-var stationList = document.getElementById('station-list')
-var otherDevices = document.getElementById('other-devices')
-
 otherDevices.addEventListener('click', function (e) {
   e.preventDefault()
   showingList = !showingList
+  getValidClients()
+  getValidMacs()
   if (showingList) {
     show(stationList)
-    show(document.getElementById("voucherInput"))
-    show(document.getElementById("voucherInput-submit"))
+    show(document.getElementById('voucherInput'))
+    show(document.getElementById('voucherInput-submit'))
     show(document.getElementsByClassName('int-selectVoucher')[0])
     otherDevices.style.backgroundColor = '#A593E0'
   } else {
@@ -211,10 +218,8 @@ otherDevices.addEventListener('click', function (e) {
   }
 })
 
-async function init () {
-  await getIp()
-  await getValidClients()
-  getValidMacs()
+function init () {
+  getIp()
 }
 
 init()
