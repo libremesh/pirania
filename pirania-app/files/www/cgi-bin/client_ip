@@ -51,30 +51,19 @@ local function getIpv4AndMac()
 end
 
 local ipv4AndMac = getIpv4AndMac()
+local fullOutput = ''
 
-local function check_voucher()
-    local mac, command
-
-    mac = ipv4AndMac.mac
-
-    command = 'voucher print_valid_macs | grep -o '..mac..' | wc -l | grep "[^[:blank:]]"'
+local function check_voucher(mac)
+    local command = 'voucher print_valid_macs | grep -o '..mac..' | wc -l | grep "[^[:blank:]]"'
     fd = io.popen(command, 'r')
     local output = fd:read('*all')
-    local int = tonumber(output)
     fd:close()
-    if (int > 0) then
-        return true
-    else
-        return false
-    end
+    return tonumber(output)
 end
 
-local valid = check_voucher()
 local response = {}
 response.ip = ipv4AndMac.ip
 response.mac = ipv4AndMac.mac
-if valid == 0 then response.valid = false
-else response.valid = true
-end
+response.valid = check_voucher(ipv4AndMac.mac) > 0
 
 print(json.encode(response))
