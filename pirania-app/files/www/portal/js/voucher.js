@@ -102,7 +102,7 @@ function authVoucher () {
 }
 
 function getIp () {
-  return fetch('http://thisnode.info/cgi-bin/client_ip', {
+  return fetch('http://thisnode.info/cgi-bin/pirania/client_ip', {
     headers: {
       'Access-Control-Allow-Origin': 'http://thisnode.info'
     }
