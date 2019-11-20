@@ -28,6 +28,7 @@
       <p id="content-welcome"></p>
       <p id="content-body"></p>
       <div class="voucher">
+<<<<<<< HEAD
         <form onsubmit="event.preventDefault(); authVoucher();">
             <div class="hidden" id="user-valid">✅</div>
             <label class="int-selectVoucher"></label>
@@ -39,6 +40,20 @@
           <input type="text" name="voucher"><br>
           <input type="submit" value="Submit">
         </form>  -->
+=======
+        <!-- <form onsubmit="event.preventDefault(); authVoucher();">
+            <label class="int-selectVoucher"></label>
+            <div class="hidden" id="station-list"></div>
+            <input type="text" id="voucherInput">
+            <input type="submit">
+          </form> -->
+        <form id="simple-form" action="http://thisnode.info/cgi-bin/pirania/handle_auth?mac=$voucher" method="post">
+          <label class="int-selectVoucher"></label>
+          <div class="hidden" id="station-list"></div>
+          <input type="text" name="voucher" id="voucherInput"><br>
+          <input type="submit" value="voucher">
+        </form> 
+>>>>>>> 40ab534... fix show stations list
         <button id="other-devices">
           <span>+</span>
           <div class="mobile icon"></div>

@@ -113,10 +113,10 @@ function getIp () {
       userMac = res.mac
       userIsValid = res.valid
       if (res.valid) {
-        hide(document.getElementById("voucherInput"))
-        hide(document.getElementById("voucherInput-submit"))
+        hide(document.getElementById('voucherInput'))
+        hide(document.getElementById('voucherInput-submit'))
         hide(document.getElementsByClassName('int-selectVoucher')[0])
-        show(document.getElementById("user-valid"))
+        show(document.getElementById('user-valid'))
       }
     })
     .catch(err => {
