@@ -74,6 +74,52 @@ local function get_limit_from_rawvoucher(db, rawvoucher)
     return '0', '0', '0', '0'
 end
 
+local function checkIfIpv4(ip)
+    if ip == nil or type(ip) ~= "string" then
+        return 0
+    end
+    -- check for format 1.11.111.111 for ipv4
+    local chunks = {ip:match("(%d+)%.(%d+)%.(%d+)%.(%d+)")}
+    if (#chunks == 4) then
+        for _,v in pairs(chunks) do
+            if (tonumber(v) < 0 or tonumber(v) > 255) then
+                return 0
+            end
+        end
+        return true
+    else
+        return false
+    end
+end
+
+function logic.getIpv4AndMac()
+    local address = os.getenv('REMOTE_ADDR')
+    local isIpv4 = checkIfIpv4(address)
+    if (isIpv4) then
+        local ipv4macCommand = "cat /proc/net/arp | grep "..address.." | awk -F ' ' '{print $4}' | head -n 1"
+        fd = io.popen(ipv4macCommand, 'r')
+        ipv4mac = fd:read('*l')
+        fd:close()
+        local res = {}
+        res.ip = address
+        res.mac = ipv4mac
+        return res
+    else
+        local ipv6macCommand = "ip neighbor | grep "..address.." | awk -F ' ' '{print $5}' | head -n 1"
+        fd6 = io.popen(ipv6macCommand, 'r')
+        ipv6mac = fd6:read('*l')
+        fd6:close()
+        local ipv4Command = "cat /proc/net/arp | grep "..ipv6mac.." | awk -F ' ' '{print $1}' | head -n 1"
+        fd4 = io.popen(ipv4Command, 'r')
+        ipv4 = fd4:read('*l')
+        fd4:close()
+        local res = {}
+        res.ip = ipv4
+        res.mac = ipv6mac
+        return res
+    end
+end
+
 function logic.valid_voucher(db, row)
     local expireDate = tonumber(dba.describe_values(db, row).expiretime) or 0
     if (expireDate ~= nil) then
@@ -94,6 +140,14 @@ function logic.auth_voucher(db, mac, voucherid)
     end
 
     return '0', '0', '0', '0'
+end
+
+function logic.check_validity(mac)
+    local command = 'voucher print_valid_macs | grep -o '..mac..' | wc -l | grep "[^[:blank:]]"'
+    fd = io.popen(command, 'r')
+    local output = fd:read('*all')
+    fd:close()
+    return tonumber(output)
 end
 
 function logic.add_voucher(db, key, voucher, epoc, upload, download, amountofmacsallowed)
