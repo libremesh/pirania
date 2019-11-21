@@ -28,17 +28,14 @@
       <p id="content-welcome"></p>
       <p id="content-body"></p>
       <div class="voucher">
-        <form onsubmit="event.preventDefault(); authVoucher();">
+          <form method="get" action="http://thisnode.info/cgi-bin/pirania/handle_auth">
             <div class="hidden" id="user-valid">✅</div>
             <label class="int-selectVoucher"></label>
             <div class="hidden" id="station-list"></div>
-            <input type="text" id="voucherInput">
-            <input type="submit" id="voucherInput-submit">
+            <input type="text" id="voucher" name="voucher">
+            <br><input type="submit" id="voucherInput-submit"  value="Submit">
+            <br>
           </form>
-        <!-- <form id="simple-form" action="http://thisnode.info/cgi-bin/handle_auth" method="post">
-          <input type="text" name="voucher"><br>
-          <input type="submit" value="Submit">
-        </form>  -->
         <button id="other-devices">
           <span>+</span>
           <div class="mobile icon"></div>

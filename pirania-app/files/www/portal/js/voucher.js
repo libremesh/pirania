@@ -49,7 +49,7 @@ function authVoucher () {
   } else {
     mac = userMac
   }
-  let voucherElem = document.getElementById('voucherInput')
+  let voucherElem = document.getElementById('voucher')
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
   show(loader)
@@ -113,7 +113,7 @@ function getIp () {
       userMac = res.mac
       userIsValid = res.valid
       if (res.valid) {
-        hide(document.getElementById('voucherInput'))
+        hide(document.getElementById('voucher'))
         hide(document.getElementById('voucherInput-submit'))
         hide(document.getElementsByClassName('int-selectVoucher')[0])
         show(document.getElementById('user-valid'))
@@ -208,7 +208,7 @@ otherDevices.addEventListener('click', function (e) {
   getValidMacs()
   if (showingList) {
     show(stationList)
-    show(document.getElementById('voucherInput'))
+    show(document.getElementById('voucher'))
     show(document.getElementById('voucherInput-submit'))
     show(document.getElementsByClassName('int-selectVoucher')[0])
     otherDevices.style.backgroundColor = '#A593E0'
