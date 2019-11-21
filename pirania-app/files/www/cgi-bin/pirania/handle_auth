@@ -1,11 +1,49 @@
 #!/usr/bin/lua
 
 local http = require('luci.http')
-
+local logic = require('voucher.logic')
 local query_string = os.getenv("QUERY_STRING")
-
-print('Content-Type: text/plain\r\n\r\n')
+-- send("Status: 302 \r\n")
+print("Content-type: text/html \n\n")
 params = http.urldecode_params(query_string)
+local res = logic.getIpv4AndMac()
+local valid = logic.check_validity(res.mac)
 
-print(params['mac'])
--- if params == mac
+local url
+
+if (valid < 1) then
+  local output
+  local mac = res.mac
+  local voucher = params['voucher']
+  local authCommand = "voucher auth_voucher " .. mac .. " ".. voucher
+  ac = io.popen(authCommand, 'r')
+  output = ac:read('*l')
+  ac:close()
+  if (tonumber(output) > 0) then
+    url = 'http://thisnode.info/portal/success.html'
+  else
+    url = 'http://thisnode.info/portal/fail.html'
+  end
+else
+  url = 'http://thisnode.info/portal/success.html'
+end
+
+print(string.format([[
+<!doctype html>
+<html>
+  <head>
+    <title>Redirect</title>
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="Refresh" content="0; url=%s">
+    <!-- If the meta tag doesn't work, try JavaScript to redirect. -->
+    <script type="text/javascript">
+      window.location.href = %q
+    </script>
+  </head>
+  <body>
+    <!-- If JavaScript doesn't work, give a link to click on to redirect. -->
+    <p><a href=%q>ENTER</a></p>
+  </body>
+</html>
+]], url, url , url))
+
