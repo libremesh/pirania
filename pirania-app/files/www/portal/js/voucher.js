@@ -4,6 +4,7 @@ var userMac = null
 var userIsValid = null
 
 var voucherButton = document.getElementById('voucherInput-submit')
+let voucherElem = document.getElementById('voucher')
 
 const validMacsForm = {
   id: 99,
@@ -63,6 +64,8 @@ function init () {
     showingList = !showingList
     if (showingList) {
       show(stationList)
+      show(voucherButton)
+      show(voucherElem)
       deviceList.style.backgroundColor = '#A593E0'
     } else {
       hide(stationList)
@@ -97,7 +100,6 @@ function authVoucher () {
   } else {
     mac = userMac
   }
-  let voucherElem = document.getElementById('voucher')
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
   show(loader)

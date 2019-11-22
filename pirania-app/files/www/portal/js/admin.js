@@ -1,6 +1,8 @@
 let session = null
 let uploadedLogo = null
 
+var errorElem = document.getElementById('error')
+
 Date.daysBetween = function( date1, date2 ) {   //Get 1 day in milliseconds   
   var one_day=1000*60*60*24    // Convert both dates to milliseconds
   var date1_ms = date1.getTime()   
