@@ -14,7 +14,7 @@ local url
 local setParams = prevUrl and '?prev='..prevUrl or ''
 
 if (valid > 0) then
-  url = 'http://thisnode.info/portal/authed.html'..setParams
+  url = 'http://thisnode.info/portal/authenticated.html'..setParams
 else
   url = 'http://thisnode.info/portal/auth.html'..setParams
 end

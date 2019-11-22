@@ -7,7 +7,7 @@
     <!-- If the meta tag doesn't work, try JavaScript to redirect. -->
     <script type="text/javascript">
       var param = "?prev="
-      var prevUrl = window.location.search.split(param)[1]
+      var prevUrl = window.location.search.split(param)[1].split('//')[1]
       var redirect = "http://thisnode.info/cgi-bin/pirania/portal"
       var url = prevUrl ? redirect+param+prevUrl : redirect
       window.location.href = url

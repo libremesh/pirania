@@ -4,33 +4,40 @@ local http = require('luci.http')
 local logic = require('voucher.logic')
 local dba = require('voucher.db')
 local query_string = os.getenv("QUERY_STRING")
-params = http.urldecode_params(query_string)
+
+print("Content-type: text/html \n\n")
+
 local res = logic.getIpv4AndMac()
+params = http.urldecode_params(query_string)
+local voucher = params['voucher']
+local mac = res.mac
+local prevUrl = params['prev']
 local valid = logic.check_mac_validity(res.mac)
 
-local url
+local url = 'http://thisnode.info/portal/auth_fail.html'
+local output
+local success = false
 
-if (valid < 1) then
-  local db = dba.load(config.db)
-  local output
-  local mac = res.mac
-  local voucher = params['voucher']
-  local prevUrl = params['prev']
-  local setParams = prevUrl and '?voucher='..voucher..'&mac='..mac..'&prev='..prevUrl or'?voucher='..voucher..'&mac='..mac
+if (voucher and mac) then
   local authCommand = "voucher auth_voucher " .. mac .. " ".. voucher
   ac = io.popen(authCommand, 'r')
   output = ac:read('*l')
   ac:close()
-  if (voucherValid.valid) then
-    url = 'http://thisnode.info/portal/auth_success.html'..setParams
-  else
-    url = 'http://thisnode.info/portal/auth_fail.html'
-  end
-else
-  url = 'http://thisnode.info/portal/auth_success.html'
+  local num = string.sub(output, 1, 1, 1)
+  print(num)
+  print(tonumber(num))
+  print(tonumber(num) > 0)
+  success = tonumber(num) > 0
+  print(success)
+  if (success == true or valid > 0) then
+    if (prevUrl ~= nil) then
+      url = 'http://'..prevUrl
+    else
+      url = 'http://thisnode.info/portal/authenticated.html'
+    end
+   end
 end
 
-print("Content-type: text/html \n\n")
 print(string.format([[
 <!doctype html>
 <html>

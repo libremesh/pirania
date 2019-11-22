@@ -30,7 +30,7 @@ if (valid < 1) then
       url = 'http://thisnode.info/portal/auth_fail.html'
     end
   else
-    local setParams = prevUrl and '?voucher='..voucher..'&mac='..mac..'&prev='..prevUrl or'?voucher='..voucher..'&mac='..mac
+    local setParams = prevUrl and '?voucher='..voucher..'&prev='..prevUrl or'?voucher='..voucher
     local voucherValid = logic.check_voucher_validity(voucher, db)
     if (voucherValid.valid) then
       url = 'http://thisnode.info/portal/auth_success.html'..setParams
