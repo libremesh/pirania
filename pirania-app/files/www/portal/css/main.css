@@ -287,15 +287,12 @@ select option {
   left: 50%;
 }
 
-#error {
+#error, .error {
   margin: 0 auto;
   text-align: center;
   padding: 10px 0;
   background: darkseagreen;
   border-radius: 8px;
-}
-
-#error {
   background: indianred;
 }
 
