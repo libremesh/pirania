@@ -8,7 +8,8 @@ function handle_request (env)
   local origin_url = env.HTTP_HOST
   local portal_url = uci_cursor:get("pirania", "base_config", "portal_url")
   if origin_url ~= portal_url then
-    local url = portal_url..'?prev='..origin_url
+    local setParams = prevUrl and '?prev='..origin_url or ''
+    local url = portal_url..setParams
     local send = uhttpd.send
     send("Status: 302 \r\n")
     send("Content-type: text/html \n\n")

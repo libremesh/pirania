@@ -4,9 +4,12 @@ local http = require('luci.http')
 local logic = require('voucher.logic')
 local dba = require('voucher.db')
 local query_string = os.getenv("QUERY_STRING")
+-- send("Status: 302 \r\n")
+print("Content-type: text/html \n\n")
 params = http.urldecode_params(query_string)
 local res = logic.getIpv4AndMac()
 local valid = logic.check_mac_validity(res.mac)
+local noJs = params['nojs']
 
 local url
 
@@ -16,21 +19,32 @@ if (valid < 1) then
   local mac = res.mac
   local voucher = params['voucher']
   local prevUrl = params['prev']
-  local setParams = prevUrl and '?voucher='..voucher..'&mac='..mac..'&prev='..prevUrl or'?voucher='..voucher..'&mac='..mac
-  local authCommand = "voucher auth_voucher " .. mac .. " ".. voucher
-  ac = io.popen(authCommand, 'r')
-  output = ac:read('*l')
-  ac:close()
-  if (voucherValid.valid) then
-    url = 'http://thisnode.info/portal/auth_success.html'..setParams
+  if (noJs == 'true') then
+    local authCommand = "voucher auth_voucher " .. mac .. " ".. voucher
+    ac = io.popen(authCommand, 'r')
+    output = ac:read('*l')
+    ac:close()
+    if (tonumber(output) > 0) then
+      url = 'http://thisnode.info/portal/authed.html'
+    else
+      url = 'http://thisnode.info/portal/auth_fail.html'
+    end
   else
-    url = 'http://thisnode.info/portal/auth_fail.html'
+    local setParams = prevUrl and '?voucher='..voucher..'&mac='..mac..'&prev='..prevUrl or'?voucher='..voucher..'&mac='..mac
+    local voucherValid = logic.check_voucher_validity(voucher, db)
+    if (voucherValid.valid) then
+      url = 'http://thisnode.info/portal/auth_success.html'..setParams
+    else
+      url = 'http://thisnode.info/portal/auth_fail.html'
+    end
   end
+
+
+
 else
-  url = 'http://thisnode.info/portal/auth_success.html'
+  url = 'http://thisnode.info/portal/authed.html'
 end
 
-print("Content-type: text/html \n\n")
 print(string.format([[
 <!doctype html>
 <html>

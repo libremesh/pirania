@@ -5,10 +5,20 @@ loader.appendChild(document.createElement('div'))
 loader.appendChild(document.createElement('div'))
 loader.appendChild(document.createElement('div'))
 
-let errorElem = document.getElementById('error')
-let result = document.getElementById('result')
 const show = elem => elem.classList.remove('hidden')
 const hide = elem => (elem.className += ' hidden')
+
+document.getElementById('nojs').setAttribute('value', false)
+
+var param = '?prev='
+var prevUrl = window.location.search.split(param)[1]
+if (prevUrl) {
+  var prevElem = document.createElement('input')
+  prevElem.setAttribute('value', prevUrl)
+  prevElem.setAttribute('id', 'prev')
+  prevElem.setAttribute('name', 'prev')
+  document.getElementById('voucher').appendChild(prevElem)
+}
 
 let content = {
   backgroundColor: 'white',
