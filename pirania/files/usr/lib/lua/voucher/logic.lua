@@ -47,7 +47,7 @@ local function get_valid_rawvoucher(db, rawvouchers)
     local voucher, expiretime, uploadlimit, downloadlimit
 
     for _, rawvoucher in ipairs( rawvouchers ) do
-        if (logic.valid_voucher(db, rawvoucher)) then
+        if (logic.check_valid_voucher(db, rawvoucher)) then
             return rawvoucher
         end
     end
@@ -120,29 +120,39 @@ function logic.getIpv4AndMac()
     end
 end
 
-function logic.valid_voucher(db, row)
+function logic.check_valid_voucher(db, row)
     local expireDate = tonumber(dba.describe_values(db, row).expiretime) or 0
     if (expireDate ~= nil) then
         return expireDate > dateNow()
     end
 end
 
-function logic.auth_voucher(db, mac, voucherid)
+function logic.check_voucher_validity(voucherid, db)
+    local res = {}
+    res.valid = false
     local rawvouchers = dba.get_vouchers_by_voucher(db, voucherid)
     if (rawvouchers ~= nil) then
         local voucher = get_valid_rawvoucher(db, rawvouchers)
         local expiretime, uploadlimit, downloadlimit, valid = get_limit_from_rawvoucher(db, voucher)
-        if(voucher ~= nil and valid == '1') then
-            use_voucher(db, voucher, mac)
+        if(voucher ~= nil and valid == '1' and tonumber(expiretime) > 0) then
+            res.limit = { expiretime, uploadlimit, downloadlimit, valid }
+            res.valid = true
+            res.voucher = voucher
         end
-
-        return expiretime, uploadlimit, downloadlimit, valid
     end
+    return res
+end
 
+function logic.auth_voucher(db, mac, voucherid)
+    local res = logic.check_voucher_validity(voucherid, db)
+    if (res.valid) then
+        use_voucher(db, res.voucher, mac)
+        return res.limit[1], res.limit[2], res.limit[3], res.limit[4]
+    end
     return '0', '0', '0', '0'
 end
 
-function logic.check_validity(mac)
+function logic.check_mac_validity(mac)
     local command = 'voucher print_valid_macs | grep -o '..mac..' | wc -l | grep "[^[:blank:]]"'
     fd = io.popen(command, 'r')
     local output = fd:read('*all')
@@ -162,7 +172,7 @@ function logic.valid_macs(db)
     rawvouchers = dba.get_all_vouchers(db)
 
     for _, rawvoucher in ipairs( rawvouchers ) do
-        if logic.valid_voucher(db, rawvoucher) then
+        if logic.check_valid_voucher(db, rawvoucher) then
             local voucher = dba.describe_values(db, rawvoucher)
             currentmacs = utils.string_split(voucher.usedmacs, '+')
             for _, mac in ipairs( currentmacs ) do
@@ -186,7 +196,7 @@ function logic.status(db, mac)
     rawvouchers = dba.get_vouchers_by_mac(db, mac)
 
     for _, rawvoucher in ipairs( rawvouchers ) do
-        if logic.valid_voucher(db, rawvoucher) then
+        if logic.check_valid_voucher(db, rawvoucher) then
             return get_limit_from_rawvoucher(db, rawvoucher)
         end
     end

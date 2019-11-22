@@ -85,8 +85,7 @@ captive_portal.auth_voucher = function(context)
 
     local db = dba.load(config.db)
     local expiretime, uploadlimit, downloadlimit, valid = logic.auth_voucher(db, mac, voucher)
-    print(valid)
-    if (tonumber(expiretime) > 0 and tonumber(valid) > 0) then
+    if (tonumber(valid) > 0) then
         -- ipset only supports timeout up to 4294967
         if tonumber(expiretime) > 4294967 then expiretime = 4294967 end
         os.execute("ipset -exist add pirania-auth-macs " .. mac .. " timeout ".. expiretime)

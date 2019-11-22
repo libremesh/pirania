@@ -2,16 +2,18 @@
 
 local http = require('luci.http')
 local logic = require('voucher.logic')
+local dba = require('voucher.db')
 local query_string = os.getenv("QUERY_STRING")
 -- send("Status: 302 \r\n")
 print("Content-type: text/html \n\n")
 params = http.urldecode_params(query_string)
 local res = logic.getIpv4AndMac()
-local valid = logic.check_validity(res.mac)
+local valid = logic.check_mac_validity(res.mac)
 
 local url
 
 if (valid < 1) then
+  local db = dba.load(config.db)
   local output
   local mac = res.mac
   local voucher = params['voucher']
