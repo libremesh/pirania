@@ -15,7 +15,4 @@ config base_config 'base_config'
     list whitelist_ipv4 '172.16.0.0/12'
     list whitelist_ipv4 '192.168.0.0/16'
     list catch_interfaces 'br-lan'
-    list catch_interfaces 'anygw'
-
-config content 'content'
-    
+    list catch_interfaces 'anygw'    
