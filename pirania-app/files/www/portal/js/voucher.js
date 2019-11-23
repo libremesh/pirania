@@ -1,7 +1,10 @@
-let validMacs = []
-let userIp = null
-let userMac = null
-let userIsValid = null
+var validMacs = []
+var userIp = null
+var userMac = null
+var userIsValid = null
+
+var voucherButton = document.getElementById('voucherInput-submit')
+let voucherElem = document.getElementById('voucher')
 
 const validMacsForm = {
   id: 99,
@@ -27,9 +30,57 @@ const validGetClients = {
   ]
 }
 
+async function loadAsyncData () {
+  await getIp()
+  await getValidClients()
+  await getValidMacs()
+}
+
+function init () {
+  console.log('Welcome to Pirania!')
+  // Add responses
+  var error = document.createElement('h4')
+  var result = document.createElement('p')
+  var form = document.getElementsByClassName('voucher')[0]
+  form.append(error)
+  form.append(result)
+  error.setAttribute('id', 'error')
+  result.setAttribute('id', 'result')
+  error.className = 'hidden'
+  result.className = 'hidden'
+
+  // Add list
+  var deviceList = document.createElement('button')
+  var add = document.createElement('span')
+  var icon = document.createElement('div')
+  document.body.appendChild(deviceList)
+  deviceList.appendChild(add)
+  deviceList.appendChild(icon)
+  icon.className = 'mobile icon'
+  add.innerHTML = '+'
+  deviceList.setAttribute('id', 'other-devices')
+  deviceList.addEventListener('click', async function (e) {
+    e.preventDefault()
+    showingList = !showingList
+    if (showingList) {
+      show(stationList)
+      show(voucherButton)
+      show(voucherElem)
+      deviceList.style.backgroundColor = '#A593E0'
+    } else {
+      hide(stationList)
+      deviceList.style.backgroundColor = ''
+    }
+    await loadAsyncData()
+  })
+}
+
+init()
+
 var showingList = false
 var stationList = document.getElementById('station-list')
-var otherDevices = document.getElementById('other-devices')
+var errorElem = document.getElementById('error')
+var resultElem = document.getElementById('result')
 
 function prepareResult (res) {
   if (res.error) {
@@ -49,7 +100,6 @@ function authVoucher () {
   } else {
     mac = userMac
   }
-  let voucherElem = document.getElementById('voucherInput')
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
   show(loader)
@@ -78,15 +128,12 @@ function authVoucher () {
     .then(prepareResult)
     .then(res => {
       hide(loader)
+      show(voucherButton)
       if (res && res.success) {
         result.innerHTML = int[lang].success
         show(result)
         hide(errorElem)
-        init()
-        const urlTo = window.location.href.split('=')[1]
-        if (urlTo) {
-          window.location.href = `http://${urlTo}`
-        }
+        loadAsyncData()
       } else if (res && !res.success) {
         errorElem.innerHTML = int[lang].invalid
         show(errorElem)
@@ -112,12 +159,6 @@ function getIp () {
       userIp = res.ip
       userMac = res.mac
       userIsValid = res.valid
-      if (res.valid) {
-        hide(document.getElementById('voucherInput'))
-        hide(document.getElementById('voucherInput-submit'))
-        hide(document.getElementsByClassName('int-selectVoucher')[0])
-        show(document.getElementById('user-valid'))
-      }
     })
     .catch(err => {
       console.log('Error fetching mac:', err)
@@ -201,25 +242,11 @@ function getValidMacs () {
     })
 }
 
-otherDevices.addEventListener('click', function (e) {
-  e.preventDefault()
-  showingList = !showingList
-  getValidClients()
-  getValidMacs()
+voucherButton.addEventListener('click', function (e) {
+  hide(voucherButton)
+  show(loader)
   if (showingList) {
-    show(stationList)
-    show(document.getElementById('voucherInput'))
-    show(document.getElementById('voucherInput-submit'))
-    show(document.getElementsByClassName('int-selectVoucher')[0])
-    otherDevices.style.backgroundColor = '#A593E0'
-  } else {
-    hide(stationList)
-    otherDevices.style.backgroundColor = ''
+    e.preventDefault()
+    authVoucher()
   }
 })
-
-function init () {
-  getIp()
-}
-
-init()

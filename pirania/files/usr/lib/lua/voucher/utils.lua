@@ -97,4 +97,25 @@ utils.split = function(string, sep)
   return ret
 end
 
+utils.redirect_page = function(url)
+  return string.format([[
+    <!doctype html>
+    <html>
+      <head>
+        <title>Redirect</title>
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="Refresh" content="0; url=%s">
+        <!-- If the meta tag doesn't work, try JavaScript to redirect. -->
+        <script type="text/javascript">
+          window.location.href = %q
+        </script>
+      </head>
+      <body>
+        <!-- If JavaScript doesn't work, give a link to click on to redirect. -->
+        <p><a href=%q>ENTER</a></p>
+      </body>
+    </html>
+    ]], url, url , url)
+end
+
 return utils

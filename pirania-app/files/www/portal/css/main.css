@@ -1,3 +1,7 @@
+body {
+  border: 10px solid white;
+}
+
 a {
   text-decoration: none;
 }
@@ -58,6 +62,19 @@ textarea {
   border-radius: 15px;
 }
 
+video {
+  min-width: 100%;
+}
+
+#content-media {
+  margin: 0 auto;
+  padding: 5vh 0;
+}
+
+#content-media img {
+  max-width: 300px;
+}
+
 #user-valid {
   font-size: 45px;
 }
@@ -107,9 +124,10 @@ select option {
 }
 
 .main {
+  margin: 0 auto;
+  max-width: 968px;
   padding: 5%;
   text-align: center;
-  border: 10px solid white;
   animation: ease-in;
   min-height: 90vh;
 }
@@ -287,15 +305,12 @@ select option {
   left: 50%;
 }
 
-#error {
+#error, .error {
   margin: 0 auto;
   text-align: center;
   padding: 10px 0;
   background: darkseagreen;
   border-radius: 8px;
-}
-
-#error {
   background: indianred;
 }
 

@@ -11,6 +11,7 @@ const int = {
     welcome: 'Bem vindo',
     body: 'Texto principal',
     backgroundColor: 'Cor de fundo',
+    rules: 'Regras da rede',
     listVouchers: 'Listar vouchers',
     success: 'Sucesso',
     error: 'Erro',
@@ -18,7 +19,9 @@ const int = {
     wrongPassword: 'Senha incorreta',
     name: 'Nome',
     days: 'Dias',
-    numberOfVouchers: 'Número de vouchers'
+    numberOfVouchers: 'Número de vouchers',
+    authenticated: 'Seu dispositivo está autenticado',
+    wait: "Aguarde"
   },
   es: {
     selectVoucher: 'Entre el voucher',
@@ -29,6 +32,7 @@ const int = {
     welcome: 'Bienvenido',
     body: 'Texto principal',
     backgroundColor: 'Color de fondo',
+    rules: 'Reglas de la rede',
     listVouchers: 'Listar vouchers',
     success: 'Sucesso',
     error: 'Erro',
@@ -36,7 +40,10 @@ const int = {
     wrongPassword: 'Contraseña incorrecta',
     name: 'Nombre',
     days: 'Dias',
-    numberOfVouchers: 'Cantidad de vouchers'
+    numberOfVouchers: 'Cantidad de vouchers',
+    authenticated: 'Tu dispositivo esta autenticado',
+    wait: "Espere"
+
   },
   en: {
     selectVoucher: 'Enter a voucher',
@@ -47,6 +54,7 @@ const int = {
     welcome: 'Welcome text',
     body: 'Main text',
     backgroundColor: 'Background color',
+    rules: 'Network rules',
     listVouchers: 'List vouchers',
     success: 'Success',
     error: 'Error',
@@ -54,7 +62,9 @@ const int = {
     wrongPassword: 'Wrong password',
     name: 'Nome',
     days: 'Dias',
-    numberOfVouchers: 'Number of vouchers'
+    numberOfVouchers: 'Number of vouchers',
+    authenticated: "You're device is authenticated!",
+    wait: "Wait"
   }
 }
 
