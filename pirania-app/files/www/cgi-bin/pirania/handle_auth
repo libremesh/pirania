@@ -5,6 +5,11 @@ local logic = require('voucher.logic')
 local dba = require('voucher.db')
 local query_string = os.getenv("QUERY_STRING")
 local db = dba.load(config.db)
+local redirect_page = require('voucher.utils').redirect_page
+local uci_cursor = require('uci').cursor()
+
+local url_authenticated = uci_cursor:get("pirania", "base_config", "url_authenticated")
+local url_fail = uci_cursor:get("pirania", "base_config", "url_fail")
 
 print("Content-type: text/html \n\n")
 
@@ -15,7 +20,7 @@ local mac = res.mac
 local prevUrl = params['prev']
 local valid = logic.check_mac_validity(res.mac)
 
-local url = 'http://thisnode.info/portal/auth_fail.html'
+local url = url_fail
 local output
 local success = false
 
@@ -28,29 +33,13 @@ if (voucher and mac) then
     if (prevUrl ~= nil) then
       url = 'http://'..prevUrl
     else
-      url = 'http://thisnode.info/portal/authenticated.html'
+      url = url_authenticated
     end
    end
 end
 
-print(string.format([[
-<!doctype html>
-<html>
-  <head>
-    <title>Redirect</title>
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="Refresh" content="0; url=%s">
-    <!-- If the meta tag doesn't work, try JavaScript to redirect. -->
-    <script type="text/javascript">
-      window.location.href = %q
-    </script>
-  </head>
-  <body>
-    <!-- If JavaScript doesn't work, give a link to click on to redirect. -->
-    <p><a href=%q>ENTER</a></p>
-  </body>
-</html>
-]], url, url , url))
+print(redirect_page(url))
+
 
 if (success == true) then
   dba.save(config.db, db)

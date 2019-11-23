@@ -2,10 +2,16 @@
 
 local http = require('luci.http')
 local logic = require('voucher.logic')
+local redirect_page = require('voucher.utils').redirect_page
+local uci_cursor = require('uci').cursor()
+
 local query_string = os.getenv("QUERY_STRING")
 print("Content-type: text/html \n\n")
 params = http.urldecode_params(query_string)
 local prevUrl = params['prev']
+
+local url_auth = uci_cursor:get("pirania", "base_config", "url_auth")
+local url_authenticated = uci_cursor:get("pirania", "base_config", "url_authenticated")
 
 local res = logic.getIpv4AndMac()
 local valid = logic.check_mac_validity(res.mac)
@@ -14,26 +20,9 @@ local url
 local setParams = prevUrl and '?prev='..prevUrl or ''
 
 if (valid > 0) then
-  url = 'http://thisnode.info/portal/authenticated.html'..setParams
+  url = url_authenticated..setParams
 else
-  url = 'http://thisnode.info/portal/auth.html'..setParams
+  url = url_auth..setParams
 end
 
-print(string.format([[
-<!doctype html>
-<html>
-  <head>
-    <title>Redirect</title>
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="Refresh" content="0; url=%s">
-    <!-- If the meta tag doesn't work, try JavaScript to redirect. -->
-    <script type="text/javascript">
-      window.location.href = %q
-    </script>
-  </head>
-  <body>
-    <!-- If JavaScript doesn't work, give a link to click on to redirect. -->
-    <p><a href=%q>ENTER</a></p>
-  </body>
-</html>
-]], url, url , url))
+print(redirect_page(url))
