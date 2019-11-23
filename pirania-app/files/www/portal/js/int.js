@@ -20,7 +20,8 @@ const int = {
     name: 'Nome',
     days: 'Dias',
     numberOfVouchers: 'Número de vouchers',
-    authenticated: 'Seu dispositivo está autenticado'
+    authenticated: 'Seu dispositivo está autenticado',
+    wait: "Aguarde"
   },
   es: {
     selectVoucher: 'Entre el voucher',
@@ -40,7 +41,9 @@ const int = {
     name: 'Nombre',
     days: 'Dias',
     numberOfVouchers: 'Cantidad de vouchers',
-    authenticated: 'Tu dispositivo esta autenticado'
+    authenticated: 'Tu dispositivo esta autenticado',
+    wait: "Espere"
+
   },
   en: {
     selectVoucher: 'Enter a voucher',
@@ -60,7 +63,8 @@ const int = {
     name: 'Nome',
     days: 'Dias',
     numberOfVouchers: 'Number of vouchers',
-    authenticated: "You're device is authenticated!"
+    authenticated: "You're device is authenticated!",
+    wait: "Wait"
   }
 }
 

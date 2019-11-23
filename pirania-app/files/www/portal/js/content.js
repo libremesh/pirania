@@ -29,20 +29,22 @@ let content = {
   welcome: '',
   body: '',
   logo: '',
-  rules: ''
+  rules: '',
+  mediaUrl: ''
 }
 
 function getContent () {
   ubusFetch('pirania-app', 'read_content')
     .then(res => {
       content = res
-      const { backgroundColor, title, welcome, body, logo, rules } = content
+      const { backgroundColor, title, welcome, body, logo, rules, mediaUrl } = content
       document.body.style.backgroundColor = backgroundColor
       const contentLogo = document.getElementById('content-logo')
       const contentTitle = document.getElementById('content-title')
       const contentWelcome = document.getElementById('content-welcome')
       const contentBody = document.getElementById('content-body')
       const contentRules = document.getElementById('content-rules')
+      const contentMedia = document.getElementById('content-media')
 
       if (contentLogo) {
         show(contentLogo)
@@ -51,7 +53,23 @@ function getContent () {
       if (contentTitle) contentTitle.innerHTML = title
       if (contentWelcome) contentWelcome.innerHTML = welcome
       if (contentBody) contentBody.innerHTML = body
-      if (contentRules) contentBody.innerHTML = rules
+      if (contentRules) contentRules.innerHTML = rules
+      if (contentMedia) {
+        var mediaType = mediaUrl.split('.')[mediaUrl.split('.').length -1]
+        if (mediaType === 'mp4' || mediaType === 'webm' || mediaType === 'avi') {
+          var videoContainerElem = document.createElement('video')
+          var videoElem = document.createElement('source')
+          contentMedia.append(videoContainerElem)
+          videoElem.setAttribute('src', mediaUrl)
+          videoElem.setAttribute('type', 'video/'+mediaType)
+          videoContainerElem.appendChild(videoElem)
+        } else if (mediaType === 'jpg' || mediaType === 'png' || mediaType === 'jpeg' || mediaType === 'gif' || mediaType === 'svg') {
+          var imageElem = document.createElement('img')
+          contentMedia.append(imageElem)
+          imageElem.setAttribute('src', mediaUrl)
+          imageElem.setAttribute('type', 'image/'+mediaType)
+        }
+      }
     })
     .catch(err => {
       document.getElementById('error').innerHTML = int[lang].error

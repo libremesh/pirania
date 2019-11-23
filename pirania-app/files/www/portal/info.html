@@ -6,38 +6,80 @@
   <title>Pirania</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
   <main class="main">
-    <h1>Success!</h1>
-    <div>
-        <form method="get" id="form" action="http://thisnode.info/cgi-bin/pirania/handle_auth">
-          <br><input type="submit"  value="Submit">
+     <a href="/portal">
+      <img id="content-logo" class="hidden" src="" alt="logo" />
+    </a>
+    <h1 id="content-title"></h1>
+    <div id="content-media"></div>
+    <div id="content-rules"></div>
+    <div id="form-container">
+          <a id="link" href="/portal"><input type="submit" value="Portal"></a>
           <br>
-        </form>
       </div>
   </main>
+  <script src="js/int.js"></script>
+  <script src="js/ubusFetch.js"></script>
+  <script src="js/content.js"></script>
   <script>
-    var form = document.getElementById('form')
-    function createInput (p) {
-      var [key, value] = p.split('=')
-      var elem = document.createElement('input')
-      form.appendChild(elem)
-      elem.setAttribute('type', 'hidden')
-      elem.setAttribute('id', key)
-      elem.setAttribute('name', key)
-      elem.value = value
-    }
     var paramsArray = window.location.search.split('?')[1]
-    var variousParams = paramsArray.split('&')
-    if (variousParams) {
-      variousParams.map(function (p) {
-        createInput(p)
-      })
+    if (paramsArray) {
+      document.getElementById('link').className = 'hidden'
+      var variousParams = null
+      var formContainer = document.getElementById('form-container')
+      var form = document.createElement('form')
+      formContainer.appendChild(form)
+      form.setAttribute('method', 'get')
+      form.setAttribute('id', 'form')
+      form.setAttribute('action', 'http://thisnode.info/cgi-bin/pirania/handle_auth')
+      var formButton = document.createElement('input')
+      formButton.setAttribute('type', 'submit')
+      formButton.setAttribute('id', 'form-button')
+      form.appendChild(formButton)
+      var timeOut = 15
+      function createInput (p) {
+        var [key, value] = p.split('=')
+        var elem = document.createElement('input')
+        form.appendChild(elem)
+        elem.setAttribute('type', 'hidden')
+        elem.setAttribute('id', key)
+        elem.setAttribute('name', key)
+        elem.value = value
+      }
+      var variousParams = paramsArray.split('&')
+      if (paramsArray) {
+        var variousParams = paramsArray.split('&')
+      }
+      if (variousParams) {
+        variousParams.map(function (p) {
+          createInput(p)
+        })
+      } else if(paramsArray) {
+        createInput(paramsArray)
+      }
+      formButton.setAttribute('disabled', true)
+      var passingValue = int[lang]['wait']+' '
+      formButton.value = passingValue+timeOut
+      passTime()
+      function passTime () {
+          window.setTimeout(() => {
+          timeOut--
+          formButton.value = passingValue+timeOut
+          if (timeOut == 0) {
+            formButton.removeAttribute('disabled')
+            formButton.value = 'Submit'
+          } else {
+            passTime()
+          }
+        }, 1000);
+      }
     } else {
-      createInput(paramsArray)
-      console.log("TCL: paramsArray", paramsArray)
+
     }
   </script>
 </body>
