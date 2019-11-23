@@ -135,7 +135,6 @@ function logic.check_voucher_validity(voucherid, db)
         local voucher = get_valid_rawvoucher(db, rawvouchers)
         local expiretime, uploadlimit, downloadlimit, valid = get_limit_from_rawvoucher(db, voucher)
         if(voucher ~= nil and valid == '1' and tonumber(expiretime) > 0) then
-            res.limit = { expiretime, uploadlimit, downloadlimit, valid }
             res.valid = true
             res.voucher = voucher
         end
@@ -143,13 +142,25 @@ function logic.check_voucher_validity(voucherid, db)
     return res
 end
 
+local function setIpset(mac, expiretime)
+    -- ipset only supports timeout up to 4294967
+    if tonumber(expiretime) > 4294967 then expiretime = 4294967 end
+    os.execute("ipset -exist add pirania-auth-macs " .. mac .. " timeout ".. expiretime)
+end
+
 function logic.auth_voucher(db, mac, voucherid)
+    local response = {
+        success=false,
+        limit={'0', '0', '0', '0'}
+    }
     local res = logic.check_voucher_validity(voucherid, db)
     if (res.valid) then
         use_voucher(db, res.voucher, mac)
-        return res.limit[1], res.limit[2], res.limit[3], res.limit[4]
+        setIpset(mac, res.voucher[3])
+        response.limit={ res.voucher[3], res.voucher[4], res.voucher[5], res.voucher[6] }
+        response.success=true
     end
-    return '0', '0', '0', '0'
+    return response
 end
 
 function logic.check_mac_validity(mac)
