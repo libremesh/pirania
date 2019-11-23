@@ -4,6 +4,7 @@ local http = require('luci.http')
 local logic = require('voucher.logic')
 local dba = require('voucher.db')
 local query_string = os.getenv("QUERY_STRING")
+local db = dba.load(config.db)
 
 print("Content-type: text/html \n\n")
 
@@ -19,17 +20,11 @@ local output
 local success = false
 
 if (voucher and mac) then
-  local authCommand = "voucher auth_voucher " .. mac .. " ".. voucher
-  ac = io.popen(authCommand, 'r')
-  output = ac:read('*l')
-  ac:close()
-  local num = string.sub(output, 1, 1, 1)
-  print(num)
-  print(tonumber(num))
-  print(tonumber(num) > 0)
-  success = tonumber(num) > 0
-  print(success)
-  if (success == true or valid > 0) then
+  local res = logic.auth_voucher(db, mac, voucher)
+  if (res.success == true or valid > 0) then
+    if (res.success == true) then
+      success = true
+    end
     if (prevUrl ~= nil) then
       url = 'http://'..prevUrl
     else
@@ -57,3 +52,6 @@ print(string.format([[
 </html>
 ]], url, url , url))
 
+if (success == true) then
+  dba.save(config.db, db)
+end
