@@ -11,6 +11,9 @@ require "ubus"
 local json = require 'luci.json'
 local ft = require('voucher.functools')
 local utils = require('voucher.utils')
+local logic = require('voucher.logic')
+local dba = require('voucher.db')
+
 local uci = require('uci')
 
 local uci_cursor = uci.cursor()
@@ -86,14 +89,15 @@ end
 
 local function auth_voucher(msg)
     local result = {}
-    result.success = {}
     local mac = msg.mac
     local voucher = msg.voucher
     result.mac = mac
     result.voucher = voucher
-    local output = shell('voucher auth_voucher '..mac..' '..voucher)
-    local success = string.sub(output, 1, 1, 1) ~= '0'
-    result.success = success
+    local db = dba.load(config.db)
+    local res = logic.auth_voucher(db, mac, voucher)
+    result.success = res.success
+    -- BUG: Saving to DB causes ubus to timeout
+    dba.save(config.db, db)
     printJson(result)
 end
 
