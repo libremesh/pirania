@@ -1,0 +1,9 @@
+{
+  "name": "Pirania - Captive Portal",
+  "short_name": "Pirania",
+  "lang": "en-US",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "white",
+  "theme_color": "black"
+}
