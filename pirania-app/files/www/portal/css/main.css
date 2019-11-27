@@ -1,3 +1,7 @@
+body {
+  border: 10px solid white;
+}
+
 a {
   text-decoration: none;
 }
@@ -58,6 +62,23 @@ textarea {
   border-radius: 15px;
 }
 
+video {
+  min-width: 100%;
+}
+
+#content-media {
+  margin: 0 auto;
+  padding: 5vh 0;
+}
+
+#content-media img {
+  max-width: 300px;
+}
+
+#user-valid {
+  font-size: 45px;
+}
+
 select {
   display: block;
   font-family: sans-serif;
@@ -103,9 +124,10 @@ select option {
 }
 
 .main {
+  margin: 0 auto;
+  max-width: 968px;
   padding: 5%;
   text-align: center;
-  border: 10px solid white;
   animation: ease-in;
   min-height: 90vh;
 }
@@ -167,7 +189,7 @@ select option {
 }
 
 .voucher {
-  padding-top: 100px;
+  padding-top: 30px;
 }
 
 .voucher form {
@@ -283,20 +305,12 @@ select option {
   left: 50%;
 }
 
-#user-mac {
-  border: 1px solid black;
-  padding: 10px 1px;
-}
-
-#error {
+#error, .error {
   margin: 0 auto;
   text-align: center;
   padding: 10px 0;
   background: darkseagreen;
   border-radius: 8px;
-}
-
-#error {
   background: indianred;
 }
 
@@ -305,6 +319,26 @@ select option {
   top: -9999px !important;
   left: -9999px !important;
   z-index: -1;
+}
+
+#other-devices {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  margin: 0 auto;
+  border-radius: 25px;
+  height: 45px;
+  width: 45px;
+  display: flex;
+  flex-flow: row nowrap;
+  text-align: center;
+  justify-content: center;
+}
+
+#other-devices span {
+  font-size: 20px;
+  position: relative;
+  right: 10px;
 }
 
 @media only screen and (max-width: 480px) {

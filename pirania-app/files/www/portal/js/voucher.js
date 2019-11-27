@@ -1,7 +1,10 @@
-let validMacs = []
-let userIp = null
-let userMac = null
-let userIsValid = null
+var validMacs = []
+var userIp = null
+var userMac = null
+var userIsValid = null
+
+var voucherButton = document.getElementById('voucherInput-submit')
+let voucherElem = document.getElementById('voucher')
 
 const validMacsForm = {
   id: 99,
@@ -27,6 +30,58 @@ const validGetClients = {
   ]
 }
 
+async function loadAsyncData () {
+  await getIp()
+  await getValidClients()
+  await getValidMacs()
+}
+
+function init () {
+  console.log('Welcome to Pirania!')
+  // Add responses
+  var error = document.createElement('h4')
+  var result = document.createElement('p')
+  var form = document.getElementsByClassName('voucher')[0]
+  form.append(error)
+  form.append(result)
+  error.setAttribute('id', 'error')
+  result.setAttribute('id', 'result')
+  error.className = 'hidden'
+  result.className = 'hidden'
+
+  // Add list
+  var deviceList = document.createElement('button')
+  var add = document.createElement('span')
+  var icon = document.createElement('div')
+  document.body.appendChild(deviceList)
+  deviceList.appendChild(add)
+  deviceList.appendChild(icon)
+  icon.className = 'mobile icon'
+  add.innerHTML = '+'
+  deviceList.setAttribute('id', 'other-devices')
+  deviceList.addEventListener('click', async function (e) {
+    e.preventDefault()
+    showingList = !showingList
+    if (showingList) {
+      show(stationList)
+      show(voucherButton)
+      show(voucherElem)
+      deviceList.style.backgroundColor = '#A593E0'
+    } else {
+      hide(stationList)
+      deviceList.style.backgroundColor = ''
+    }
+    await loadAsyncData()
+  })
+}
+
+init()
+
+var showingList = false
+var stationList = document.getElementById('station-list')
+var errorElem = document.getElementById('error')
+var resultElem = document.getElementById('result')
+
 function prepareResult (res) {
   if (res.error) {
     console.log(res.error)
@@ -38,9 +93,13 @@ function prepareResult (res) {
 }
 
 function authVoucher () {
+  if (!userMac) return
   let mac
-  mac = document.getElementById('stations').value || userMac
-  let voucherElem = document.getElementById('voucherInput')
+  if (showingList) {
+    mac = document.getElementById('stations').value || userMac
+  } else {
+    mac = userMac
+  }
   let voucher = voucherElem.value.toLowerCase()
   voucherElem.after(loader)
   show(loader)
@@ -69,15 +128,12 @@ function authVoucher () {
     .then(prepareResult)
     .then(res => {
       hide(loader)
+      show(voucherButton)
       if (res && res.success) {
         result.innerHTML = int[lang].success
         show(result)
         hide(errorElem)
-        init()
-        const urlTo = window.location.href.split('=')[1]
-        if (urlTo) {
-          window.location.href = `http://${urlTo}`
-        }
+        loadAsyncData()
       } else if (res && !res.success) {
         errorElem.innerHTML = int[lang].invalid
         show(errorElem)
@@ -93,41 +149,21 @@ function authVoucher () {
 }
 
 function getIp () {
-  window.RTCPeerConnection =
-    window.RTCPeerConnection ||
-    window.mozRTCPeerConnection ||
-    window.webkitRTCPeerConnection // compatibility for Firefox and chrome
-  var pc = new RTCPeerConnection({ iceServers: [] })
-
-  var noop = function () {}
-  pc.createDataChannel('') // create a bogus data channel
-  pc.createOffer(pc.setLocalDescription.bind(pc), noop) // create offer and set local description
-  pc.onicecandidate = function (ice) {
-    if (ice && ice.candidate && ice.candidate.candidate) {
-      var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(
-        ice.candidate.candidate
-      )[1]
-      pc.onicecandidate = noop
-      if (myIP) userIp = myIP
-      else {
-        fetch('http://thisnode.info/cgi-bin/client_ip')
-          .then(i => {
-            console.log(i)
-            return JSON.parse(i)
-          })
-          .then(prepareResult)
-          .then(res => {
-            if (res) {
-              userIp = res
-            }
-          })
-          .catch(err => {
-            console.log('UBUS error:', err)
-            ubusError = true
-          })
-      }
+  return fetch('http://thisnode.info/cgi-bin/pirania/client_ip', {
+    headers: {
+      'Access-Control-Allow-Origin': 'http://thisnode.info'
     }
-  }
+  })
+    .then(async i => {
+      const res = await i.json()
+      userIp = res.ip
+      userMac = res.mac
+      userIsValid = res.valid
+    })
+    .catch(err => {
+      console.log('Error fetching mac:', err)
+      ubusError = true
+    })
 }
 
 function getValidClients () {
@@ -140,7 +176,7 @@ function getValidClients () {
       myDiv.appendChild(select)
     }
   }
-  fetch(url, {
+  return fetch(url, {
     method: 'POST',
     body: JSON.stringify(validGetClients),
     headers: {
@@ -158,9 +194,6 @@ function getValidClients () {
           let textnode = document.createTextNode('')
           if (userIp === i.ip) {
             userMac = i.mac
-            const userMacElement = document.getElementById('user-mac')
-            const infoText = '📱 ' + i.station + ' ' + '<b>' + userMac + '</b>'
-            userMacElement.innerHTML = valid ? infoText + ' ✅' : infoText
             node.selected = true
           }
           const isIp = userIp === i.ip ? '📱 ' : ''
@@ -169,7 +202,7 @@ function getValidClients () {
             : isIp + i.station
           node.value = i.mac
           node.appendChild(textnode)
-          document.getElementById('stations').appendChild(node)
+          return document.getElementById('stations').appendChild(node)
         })
       }
     })
@@ -209,10 +242,11 @@ function getValidMacs () {
     })
 }
 
-function init () {
-  getIp()
-  getValidClients()
-  getValidMacs()
-}
-
-init()
+voucherButton.addEventListener('click', function (e) {
+  hide(voucherButton)
+  show(loader)
+  if (showingList) {
+    e.preventDefault()
+    authVoucher()
+  }
+})

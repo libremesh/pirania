@@ -75,6 +75,7 @@ local methods = {
         welcome = 'value',
         body = 'value',
         logo = 'value',
+        rules = 'value'
     }
 }
 

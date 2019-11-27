@@ -1,9 +1,9 @@
-const  userLang = navigator.language || navigator.userLanguage
+const userLang = navigator.language || navigator.userLanguage
 const lang = userLang.split('-')[0] || userLang || 'en'
 
 const int = {
   pt: {
-    selectVoucher: 'Selecione o aparelho e entre o voucher',
+    selectVoucher: 'Entre o voucher',
     createNewVoucher: 'Criar novo voucher',
     createManyVouchers: 'Criar muitos vouchers',
     changeContent: 'Mudar o conteúdo',
@@ -11,6 +11,7 @@ const int = {
     welcome: 'Bem vindo',
     body: 'Texto principal',
     backgroundColor: 'Cor de fundo',
+    rules: 'Regras da rede',
     listVouchers: 'Listar vouchers',
     success: 'Sucesso',
     error: 'Erro',
@@ -19,9 +20,11 @@ const int = {
     name: 'Nome',
     days: 'Dias',
     numberOfVouchers: 'Número de vouchers',
+    authenticated: 'Seu dispositivo está autenticado',
+    wait: "Aguarde"
   },
   es: {
-    selectVoucher: 'Selecione el dispositivo',
+    selectVoucher: 'Entre el voucher',
     createNewVoucher: 'Crear nuevo voucher',
     createManyVouchers: 'Crear muchos vouchers',
     changeContent: 'Cambiar el contenido',
@@ -29,6 +32,7 @@ const int = {
     welcome: 'Bienvenido',
     body: 'Texto principal',
     backgroundColor: 'Color de fondo',
+    rules: 'Reglas de la rede',
     listVouchers: 'Listar vouchers',
     success: 'Sucesso',
     error: 'Erro',
@@ -37,9 +41,12 @@ const int = {
     name: 'Nombre',
     days: 'Dias',
     numberOfVouchers: 'Cantidad de vouchers',
+    authenticated: 'Tu dispositivo esta autenticado',
+    wait: "Espere"
+
   },
   en: {
-    selectVoucher: 'Select a device and enter a voucher',
+    selectVoucher: 'Enter a voucher',
     createNewVoucher: 'Create new voucher',
     createManyVouchers: 'Create many vouchers',
     changeContent: 'Change content',
@@ -47,6 +54,7 @@ const int = {
     welcome: 'Welcome text',
     body: 'Main text',
     backgroundColor: 'Background color',
+    rules: 'Network rules',
     listVouchers: 'List vouchers',
     success: 'Success',
     error: 'Error',
@@ -55,9 +63,13 @@ const int = {
     name: 'Nome',
     days: 'Dias',
     numberOfVouchers: 'Number of vouchers',
+    authenticated: "You're device is authenticated!",
+    wait: "Wait"
   }
 }
 
 Object.keys(int[lang]).map(text => {
-  Array.from(document.getElementsByClassName(`int-${text}`)).map(element => element.innerHTML = int[lang][text])
+  Array.from(document.getElementsByClassName(`int-${text}`)).map(
+    element => (element.innerHTML = int[lang][text])
+  )
 })
