@@ -30,7 +30,8 @@ if (valid < 1) then
     ac = io.popen(authCommand, 'r')
     output = ac:read('*l')
     ac:close()
-    if (tonumber(output) > 0) then
+    local validationOut = tonumber(output)
+    if (validationOut and validationOut > 0) then
       url = url_authenticated
     else
       url = url_fail
