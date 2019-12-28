@@ -62,6 +62,10 @@ textarea {
   border-radius: 15px;
 }
 
+#link input {
+  margin-top: 15vh;
+}
+
 video {
   min-width: 100%;
 }

@@ -21,7 +21,9 @@ const int = {
     days: 'Dias',
     numberOfVouchers: 'Número de vouchers',
     authenticated: 'Seu dispositivo está autenticado',
-    wait: "Aguarde"
+    wait: 'Aguarde',
+    continue: 'Continuar',
+    info: 'Mais informações',
   },
   es: {
     selectVoucher: 'Entre el voucher',
@@ -42,8 +44,9 @@ const int = {
     days: 'Dias',
     numberOfVouchers: 'Cantidad de vouchers',
     authenticated: 'Tu dispositivo esta autenticado',
-    wait: "Espere"
-
+    wait: 'Espere',
+    continue: 'Seguir',
+    info: 'Mas informaciones',
   },
   en: {
     selectVoucher: 'Enter a voucher',
@@ -64,12 +67,20 @@ const int = {
     days: 'Dias',
     numberOfVouchers: 'Number of vouchers',
     authenticated: "You're device is authenticated!",
-    wait: "Wait"
+    wait: 'Wait',
+    continue: 'Continue',
+    info: 'More information',
   }
 }
 
 Object.keys(int[lang]).map(text => {
   Array.from(document.getElementsByClassName(`int-${text}`)).map(
-    element => (element.innerHTML = int[lang][text])
+    element => {
+      if (element.tagName === 'INPUT') {
+        element.value = int[lang][text]
+      } else {
+        element.innerHTML = int[lang][text]
+      }
+    }
   )
 })
