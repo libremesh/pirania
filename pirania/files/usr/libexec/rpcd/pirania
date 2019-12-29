@@ -35,12 +35,6 @@ local function shell(command)
     return result
 end
 
-local function governance(msg)
-    local result = {}
-    result = json.decode(shell('cat /etc/pirania/governance.json'))
-    printJson(result)
-end
-
 local function list_vouchers(msg)
     local result = {}
     result = json.decode(shell('voucher list_vouchers'))
@@ -70,41 +64,17 @@ local function add_many_vouchers(msg)
     printJson(result)
 end
 
-local function a(msg)
+local function add_visitor_voucher(msg)
     local result = {}
-    local key = msg.key
-    local secret = msg.secret
-    local epoc = msg.epoc
-    local upload = msg.upload
-    local download = msg.download
-    local amountofmacsallowed = msg.amountofmacsallowed
-    local output = shell('voucher add_voucher '..key..' '..secret..' '..epoc..' '..download..' '..upload..' '..amountofmacsallowed)
-    local parsed = string.gsub(output, "%s+", "")
-    if tonumber(parsed) == 0 then
-        result.success = false
-    else
-        result.key = key
-        result.secret = secret
-        result.epoc = epoc
-        result.upload = upload
-        result.download = download
-        result.amountofmacsallowed = amountofmacsallowed
-    end
-    printJson(result)
-end
-
-local function add_member_voucher(msg)
     local output = shell("cat /proc/sys/kernel/hostname")
     local hostname = string.gsub(output, "%s+", "")
-    local result = {}
-    result.hostname = hostname
-    local note = msg.note
-    -- local parsedNote = 
+    local noteHiph = string.gsub(msg.note, "%s+", "-")
+    local note = string.lower(noteHiph)
     local secret = msg.secret
-    -- local epoc = msg.epoc
-    -- local upload = msg.upload
-    -- local download = msg.download
-    -- local amountofmacsallowed = msg.amountofmacsallowed
+    local epoc = msg.epoc
+    local key = hostname..'-visitor'
+    result.hostname = hostname
+    result.key = key
     -- local output = shell('voucher add_voucher '..key..' '..secret..' '..epoc..' '..download..' '..upload..' '..amountofmacsallowed)
     -- local parsed = string.gsub(output, "%s+", "")
     -- if tonumber(parsed) == 0 then
@@ -207,7 +177,6 @@ local methods = {
   remove_voucher = { name = 'value' },
   renew_voucher = { name = 'value', date = 0 },
   show_url = { no_params = 0 },
-  governance = { no_params = 0 },
   change_url = { url = 'value' },
 }
 
@@ -227,7 +196,6 @@ if arg[1] == 'call' then
   elseif   arg[2] == 'remove_voucher'	    then remove_voucher(msg)
   elseif   arg[2] == 'renew_voucher'	    then renew_voucher(msg)
   elseif   arg[2] == 'show_url'	            then show_url(msg)
-  elseif   arg[2] == 'governance'	            then governance(msg)
   elseif   arg[2] == 'change_url'	        then change_url(msg)
   else                                      printJson({ error = "Method not found" })
   end
