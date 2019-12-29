@@ -15,8 +15,22 @@ local context
 
 captive_portal = {}
 
+local function shell(command)
+    local handle = io.popen(command)
+    local result = handle:read("*a")
+    handle:close()
+    return result
+end
+
 local function printJson (obj)
     print(json.encode(obj))
+end
+
+local function dateNow()
+    local output = shell('date +%s000')
+    local parsed = string.gsub(output, "%s+", "")
+    local dateNow = tonumber(parsed)
+    return dateNow
 end
 
 local function shell(command)
@@ -139,6 +153,10 @@ captive_portal.list_vouchers = function()
             end
             result[_].name = t
         else result[_].name = nameInfo[startName]
+        end
+        local expireDate = tonumber(v[vExpire]) or 0
+        if (expireDate < dateNow()) then
+            result[_].type = 'invalid'
         end
         result[_].fullName = v[vName]
         result[_].expires = v[vExpire]
