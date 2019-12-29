@@ -1,0 +1,9 @@
+{
+  "payday": 20,
+  "speed": "10Mbs",
+  "provider": "Internet Service Provider Name",
+  "providerCost": "150",
+  "perPersonCost": "35",
+  "amountInReserve": "0",
+  "currency": "R$"
+}
