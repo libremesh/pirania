@@ -65,19 +65,19 @@ captive_portal.url = function(context)
 end
 
 -- Update voucher date
-local function updateVoucher(name, date)
+local function updateVoucher(secret, date)
     local result = {}
     local db = dba.load(config.db)
     local toRenew = {}
     for _, voucher in pairs (db.data) do
-        if (voucher[1] == name) then
+        if (voucher[2] == secret) then
             toRenew = voucher
         end
     end
     if (#toRenew > 0) then
         result.success = true
         toRenew[3] = tonumber(date)
-        local validVouchers = ft.filter(function(row, index) return row[1] ~= name end, db.data)
+        local validVouchers = ft.filter(function(row, index) return row[2] ~= secret end, db.data)
         local newDb = db
         newDb.data = validVouchers
         table.insert(newDb.data, toRenew)
@@ -169,15 +169,15 @@ end
 
 -- Renew voucher
 captive_portal.renew_voucher = function(context)
-    local voucherName = context[1]
+    local voucherSecret = context[1]
     local renewDate = context[2]
-    printJson(updateVoucher(voucherName, renewDate))
+    printJson(updateVoucher(voucherSecret, renewDate))
 end
 
 -- Remove voucher
 captive_portal.remove_voucher = function(context)
-    local voucherName = context[1]
-    printJson(updateVoucher(voucherName, 0))
+    local voucherSecret = context[1]
+    printJson(updateVoucher(voucherSecret, 0))
 end
 
 --[[
@@ -194,7 +194,7 @@ captive_portal.add_voucher = function(context)
 
     local db = dba.load(config.db)
     for _, v in pairs (db.data) do
-        if (v[1] == key) then
+        if (v[2] == voucher) then
             exists = true
         end
     end

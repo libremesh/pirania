@@ -42,7 +42,7 @@ local function list_vouchers(msg)
 end
 
 local function renew_voucher(msg)
-    local name = msg.name
+    local name = msg.voucher
     local date = msg.date
     local result = {}
     result = json.decode(shell('voucher renew_voucher '..name..' '..date))
@@ -50,7 +50,7 @@ local function renew_voucher(msg)
   end
 
 local function remove_voucher(msg)
-  local name = msg.name
+  local name = msg.voucher
   local result = {}
   result = json.decode(shell('voucher remove_voucher '..name))
   printJson(result)
@@ -174,8 +174,8 @@ local methods = {
   auth_voucher = { mac = 'value', voucher = 'value' },
   print_valid_macs = { no_params = 0 },
   list_vouchers = { no_params = 0 },
-  remove_voucher = { name = 'value' },
-  renew_voucher = { name = 'value', date = 0 },
+  remove_voucher = { voucher = 'value' },
+  renew_voucher = { voucher = 'value', date = 0 },
   show_url = { no_params = 0 },
   change_url = { url = 'value' },
 }
