@@ -151,14 +151,14 @@ captive_portal.list_vouchers = function()
                     t = t..'-'..v
                 end
             end
-            result[_].name = t
-        else result[_].name = nameInfo[startName]
+            result[_].note = t
+        else result[_].note = nameInfo[startName]
         end
         local expireDate = tonumber(v[vExpire]) or 0
         if (expireDate < dateNow()) then
             result[_].type = 'invalid'
         end
-        result[_].fullName = v[vName]
+        result[_].name = v[vName]
         result[_].expires = v[vExpire]
         result[_].voucher = v[vSecret]
         result[_].macsAllowed = v[vMacsAllowed]
