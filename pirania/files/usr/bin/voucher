@@ -123,12 +123,19 @@ captive_portal.show_active_vouchers = function()
     local result = {}
     local vName = 1
     local vExpire = 3
+    local usedMacs = 7
     members = 0
     visitors = 0
     local db = dba.load(config.db)
     for _, v in pairs(db.data) do
         local expireDate = tonumber(v[vExpire]) or 0
-        if (expireDate > dateNow()) then
+        local active = function ()
+            if (#v[usedMacs] > 0) then
+                return true
+            end
+            return false
+        end
+        if (expireDate > dateNow() and active() == true) then
             local nameInfo = {}
             for word in v[vName]:gmatch("[^-]+") do
                 table.insert(nameInfo, word)
