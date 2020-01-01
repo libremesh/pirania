@@ -118,7 +118,37 @@ captive_portal.status = function(context)
     print ( logic.status(db, mac) )
 end
 
--- List all
+-- Show numbers of active vouchers
+captive_portal.show_active_vouchers = function()
+    local result = {}
+    local vName = 1
+    local vExpire = 3
+    members = 0
+    visitors = 0
+    local db = dba.load(config.db)
+    for _, v in pairs(db.data) do
+        local expireDate = tonumber(v[vExpire]) or 0
+        if (expireDate > dateNow()) then
+            local nameInfo = {}
+            for word in v[vName]:gmatch("[^-]+") do
+                table.insert(nameInfo, word)
+            end
+            if (nameInfo[1] == 'm') then
+                local nextN = members + 1
+                members = nextN
+            else
+                local nextN = visitors + 1
+                visitors = nextN
+            end
+        end
+        result.members = members
+        result.visitors = visitors
+    end
+    printJson(result)
+end
+
+
+-- List all vouchers
 captive_portal.list_vouchers = function()
     local result = {}
     local vName = 1

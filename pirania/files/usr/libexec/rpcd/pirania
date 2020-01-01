@@ -35,6 +35,12 @@ local function shell(command)
     return result
 end
 
+local function show_active_vouchers(msg)
+    local result = {}
+    result = json.decode(shell('voucher show_active_vouchers'))
+    printJson({ vouchers = result })
+end
+
 local function list_vouchers(msg)
     local result = {}
     result = json.decode(shell('voucher list_vouchers'))
@@ -203,6 +209,7 @@ local methods = {
   auth_voucher = { mac = 'value', voucher = 'value' },
   print_valid_macs = { no_params = 0 },
   list_vouchers = { no_params = 0 },
+  show_active_vouchers = { no_params = 0 },
   remove_voucher = { voucher = 'value' },
   renew_voucher = { voucher = 'value', date = 0 },
   show_url = { no_params = 0 },
@@ -223,6 +230,7 @@ if arg[1] == 'call' then
   elseif   arg[2] == 'auth_voucher'	        then auth_voucher(msg)
   elseif   arg[2] == 'print_valid_macs'	    then print_valid_macs(msg)
   elseif   arg[2] == 'list_vouchers'	    then list_vouchers(msg)
+  elseif   arg[2] == 'show_active_vouchers'	then show_active_vouchers(msg)
   elseif   arg[2] == 'remove_voucher'	    then remove_voucher(msg)
   elseif   arg[2] == 'renew_voucher'	    then renew_voucher(msg)
   elseif   arg[2] == 'show_url'	            then show_url(msg)
