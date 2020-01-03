@@ -62,6 +62,22 @@ local function remove_voucher(msg)
   printJson(result)
 end
 
+local function renew_many_vouchers(msg)
+    local date = msg.date
+    local result = {}
+    local vouchers = ft.map(
+        function(val)
+            local v = {}
+            v.voucher = val
+            v.date = date
+            return v
+        end, msg.vouchers)
+    result.vouchers = vouchers
+    local voucher = io.popen("voucher renew_many_vouchers", 'w')
+    result.success = assert(voucher:write(table.concat(vouchers, '\n')))
+    printJson(result)
+end
+
 local function add_many_vouchers(msg)
     local result = {}
     local vouchers = ft.map(function(val) return json.encode(val) end, msg.vouchers)
@@ -212,6 +228,7 @@ local methods = {
   show_active_vouchers = { no_params = 0 },
   remove_voucher = { voucher = 'value' },
   renew_voucher = { voucher = 'value', date = 0 },
+  renew_many_vouchers = {  date = 0, vouchers = 'value' },
   show_url = { no_params = 0 },
   change_url = { url = 'value' },
 }
@@ -233,6 +250,7 @@ if arg[1] == 'call' then
   elseif   arg[2] == 'show_active_vouchers'	then show_active_vouchers(msg)
   elseif   arg[2] == 'remove_voucher'	    then remove_voucher(msg)
   elseif   arg[2] == 'renew_voucher'	    then renew_voucher(msg)
+  elseif   arg[2] == 'renew_many_vouchers'	then renew_many_vouchers(msg)
   elseif   arg[2] == 'show_url'	            then show_url(msg)
   elseif   arg[2] == 'change_url'	        then change_url(msg)
   else                                      printJson({ error = "Method not found" })
