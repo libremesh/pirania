@@ -1,3 +1,5 @@
+# Deprecated! Moved to https://github.com/libremesh/lime-packages/tree/master/packages
+
 ![PIRANHA](https://i.imgur.com/kHWUNOu.png)
 
 ## Voucher and Captive Portal solution for community networks
